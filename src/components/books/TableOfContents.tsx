@@ -1,0 +1,81 @@
+"use client";
+
+import Link from "next/link";
+import type { Chapter, ReadingProgress } from "@/types";
+
+interface TableOfContentsProps {
+  bookId: string;
+  chapters: Chapter[];
+  progress?: ReadingProgress | null;
+}
+
+export function TableOfContents({
+  bookId,
+  chapters,
+  progress,
+}: TableOfContentsProps) {
+  if (chapters.length === 0) {
+    return (
+      <p className="py-10 text-center text-muted">
+        No chapters available yet. Check back soon!
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {chapters.map((chapter) => {
+        const isCurrent = progress?.lastChapterId === chapter.id;
+        const isRead =
+          progress &&
+          chapter.order < progress.lastChapterOrder;
+        const isCompleted =
+          isCurrent && progress && progress.scrollPosition >= 90;
+
+        return (
+          <Link
+            key={chapter.id}
+            href={`/books/${bookId}/chapters/${chapter.id}`}
+            className={`flex items-center gap-4 rounded-xl border p-4 transition-all duration-200 hover:shadow-sm ${
+              isCurrent
+                ? "border-gold/50 bg-gold/5"
+                : "border-border bg-card hover:border-gold/30"
+            }`}
+          >
+            {/* Status indicator */}
+            <span
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium ${
+                isRead || isCompleted
+                  ? "bg-success/10 text-success"
+                  : isCurrent
+                    ? "bg-gold text-white"
+                    : "bg-card-hover text-muted"
+              }`}
+            >
+              {isRead || isCompleted ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                chapter.order
+              )}
+            </span>
+
+            <div className="flex-1">
+              <h3 className="font-medium">{chapter.title}</h3>
+              {isCurrent && progress && (
+                <p className="mt-0.5 text-xs text-gold-dark">
+                  Continue reading &middot; {progress.scrollPosition}% complete
+                </p>
+              )}
+              {isRead && !isCurrent && (
+                <p className="mt-0.5 text-xs text-success">Completed</p>
+              )}
+            </div>
+            <span className="text-muted">&rarr;</span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
