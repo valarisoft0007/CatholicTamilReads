@@ -22,13 +22,14 @@ export function BookForm({ book }: BookFormProps) {
     book?.status || "draft"
   );
   const [order, setOrder] = useState(book?.order || 0);
+  const [ebookFilename, setEbookFilename] = useState(book?.ebookFilename || "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      const data = { title, description, authorName, coverImageUrl, status, order };
+      const data = { title, description, authorName, coverImageUrl, status, order, ebookFilename };
 
       if (book) {
         await updateBook(book.id, data);
@@ -89,6 +90,23 @@ export function BookForm({ book }: BookFormProps) {
           rows={3}
           className="w-full rounded-md border border-border px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
         />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium">
+          eBook Download Filename{" "}
+          <span className="font-normal text-muted">(English, no extension)</span>
+        </label>
+        <input
+          type="text"
+          value={ebookFilename}
+          onChange={(e) => setEbookFilename(e.target.value)}
+          placeholder="e.g. Confessions-of-a-Saint"
+          className="w-full rounded-md border border-border px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+        />
+        <p className="mt-1 text-xs text-muted">
+          Used as the filename when readers download the PDF/EPUB. Leave blank to auto-generate from title.
+        </p>
       </div>
 
       <div className="flex gap-4">

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["puppeteer", "epub-gen-memory", "html-to-docx"],
   images: {
     remotePatterns: [
       {

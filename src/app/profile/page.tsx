@@ -8,7 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { getBookmarks, removeBookmark } from "@/lib/firestore/bookmarks";
 import { getFavorites, removeFavorite } from "@/lib/firestore/bookmarks";
 import { getAllProgress } from "@/lib/firestore/reading-progress";
-import type { Bookmark, Favorite, ReadingProgress } from "@/types";
+import { getBook } from "@/lib/firestore/books";
+import type { Bookmark, Book, Favorite, ReadingProgress } from "@/types";
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
@@ -16,6 +17,7 @@ export default function ProfilePage() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [progress, setProgress] = useState<ReadingProgress[]>([]);
+  const [downloads, setDownloads] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,10 +31,23 @@ export default function ProfilePage() {
       getBookmarks(user.uid),
       getFavorites(user.uid),
       getAllProgress(user.uid),
-    ]).then(([b, f, p]) => {
+    ]).then(async ([b, f, p]) => {
       setBookmarks(b);
       setFavorites(f);
       setProgress(p);
+
+      // Fetch book data for favorites that have eBook downloads
+      if (f.length > 0) {
+        const books = await Promise.all(
+          f.map((fav) => getBook(fav.bookId))
+        );
+        setDownloads(
+          books.filter(
+            (bk): bk is Book => bk !== null && !!(bk.ebookPdfUrl || bk.ebookEpubUrl)
+          )
+        );
+      }
+
       setLoading(false);
     });
   }, [user, authLoading, router]);
@@ -122,6 +137,46 @@ export default function ProfilePage() {
           </div>
         )}
       </section>
+
+      {/* Downloads */}
+      {downloads.length > 0 && (
+        <section className="mb-10">
+          <h2 className="mb-4 text-lg font-semibold">Downloads</h2>
+          <div className="space-y-2">
+            {downloads.map((bk) => (
+              <div
+                key={bk.id}
+                className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+              >
+                <Link
+                  href={`/books/${bk.id}`}
+                  className="font-medium hover:text-gold transition-colors"
+                >
+                  {bk.title}
+                </Link>
+                <div className="flex gap-2">
+                  {bk.ebookPdfUrl && (
+                    <a
+                      href={`/api/books/${bk.id}/download?format=pdf`}
+                      className="rounded-md border border-border px-3 py-1.5 text-xs hover:bg-card-hover transition-colors"
+                    >
+                      PDF
+                    </a>
+                  )}
+                  {bk.ebookEpubUrl && (
+                    <a
+                      href={`/api/books/${bk.id}/download?format=epub`}
+                      className="rounded-md border border-border px-3 py-1.5 text-xs hover:bg-card-hover transition-colors"
+                    >
+                      EPUB
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Bookmarks */}
       <section>
