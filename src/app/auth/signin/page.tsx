@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SignInForm } from "@/components/auth/SignInForm";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +14,9 @@ export default function SignInPage() {
             Sign in to track your reading progress and bookmarks.
           </p>
         </div>
-        <SignInForm />
+        <Suspense fallback={null}>
+          <SignInForm />
+        </Suspense>
       </div>
     </div>
   );

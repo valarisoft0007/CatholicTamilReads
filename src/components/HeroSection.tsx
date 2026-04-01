@@ -1,5 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
+
 const ROSARY_BEADS = [
   { angle: 0,   cx: 50,      cy: 28      },
   { angle: 36,  cx: 46.5623, cy: 38.5801 },
@@ -109,6 +113,17 @@ function CandleIcon({ className }: { className?: string }) {
 }
 
 export function HeroSection() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleExplore = () => {
+    if (user) {
+      document.getElementById("books")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      router.push("/auth/signin?redirect=/#books");
+    }
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-gold/8 via-gold/3 to-transparent py-12 sm:py-20">
       {/* Decorative SVG Icons */}
@@ -127,8 +142,8 @@ export function HeroSection() {
         <p className="mx-auto mb-8 max-w-md text-base text-muted sm:text-lg">
           Inspiring books, delivered chapter by chapter.
         </p>
-        <a
-          href="#books"
+        <button
+          onClick={handleExplore}
           className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-gold-dark hover:shadow-lg"
         >
           <svg
@@ -146,7 +161,16 @@ export function HeroSection() {
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
           </svg>
           Start Exploring
-        </a>
+        </button>
+
+        {!user && (
+          <p className="mt-3 text-xs text-muted">
+            <Link href="/auth/signin" className="text-gold hover:underline">
+              Create a free account
+            </Link>{" "}
+            to start reading
+          </p>
+        )}
       </div>
     </section>
   );
