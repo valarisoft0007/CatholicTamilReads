@@ -2,8 +2,9 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 import { getBook } from "@/lib/firestore/books";
 import { getChapter, getPublishedChapters } from "@/lib/firestore/chapters";
 import { ChapterContent } from "@/components/reader/ChapterContent";
@@ -25,12 +26,24 @@ export default function ChapterReaderPage() {
     bookId: string;
     chapterId: string;
   }>();
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [book, setBook] = useState<Book | null>(null);
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [allChapters, setAllChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      router.push(
+        `/auth/signin?redirect=/books/${bookId}/chapters/${chapterId}`
+      );
+    }
+  }, [user, authLoading, bookId, chapterId, router]);
+
+  useEffect(() => {
+    if (authLoading || !user) return;
     async function load() {
       const [b, ch, chapters] = await Promise.all([
         getBook(bookId),
@@ -44,9 +57,9 @@ export default function ChapterReaderPage() {
       window.scrollTo(0, 0);
     }
     load();
-  }, [bookId, chapterId]);
+  }, [bookId, chapterId, user, authLoading]);
 
-  if (loading) {
+  if (authLoading || !user || loading) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10">
         <div className="space-y-4">
