@@ -9,6 +9,9 @@ export interface Book {
   status: "draft" | "published";
   chapterCount: number;
   order: number;
+  ebookPdfUrl?: string;
+  ebookEpubUrl?: string;
+  ebookFilename?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

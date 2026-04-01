@@ -2,10 +2,16 @@
 
 import { useEffect, useState } from "react";
 
+// const SIZES = [
+//   { label: "S", value: "0.95rem" },
+//   { label: "M", value: "1.1rem" },
+//   { label: "L", value: "1.25rem" },
+// ] as const;
+
 const SIZES = [
-  { label: "S", value: "0.95rem" },
-  { label: "M", value: "1.1rem" },
-  { label: "L", value: "1.25rem" },
+  { label: "S", value: "0.9rem" },
+  { label: "M", value: "1.0rem" },
+  { label: "L", value: "1.2rem" },
 ] as const;
 
 const STORAGE_KEY = "reader-font-size";

@@ -9,6 +9,7 @@ import { getBook } from "@/lib/firestore/books";
 import { getPublishedChapters } from "@/lib/firestore/chapters";
 import { getProgress } from "@/lib/firestore/reading-progress";
 import { TableOfContents } from "@/components/books/TableOfContents";
+import { DownloadButtons } from "@/components/books/DownloadButtons";
 import { useAuth } from "@/hooks/useAuth";
 import type { Book, Chapter, ReadingProgress } from "@/types";
 
@@ -138,6 +139,15 @@ export default function BookDetailPage() {
               </Link>
             )}
           </div>
+
+          {/* eBook Downloads — registered users only */}
+          {user && (
+            <DownloadButtons
+              bookId={bookId}
+              ebookPdfUrl={book.ebookPdfUrl}
+              ebookEpubUrl={book.ebookEpubUrl}
+            />
+          )}
         </div>
       </div>
 

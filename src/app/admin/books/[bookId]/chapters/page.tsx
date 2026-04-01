@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getBook } from "@/lib/firestore/books";
 import { getAllChapters, deleteChapter } from "@/lib/firestore/chapters";
+import { ExportButtons } from "@/components/admin/ExportButtons";
 import type { Book, Chapter } from "@/types";
 
 export default function AdminChaptersPage() {
@@ -57,6 +58,20 @@ export default function AdminChaptersPage() {
           New Chapter
         </Link>
       </div>
+
+      {/* eBook Export */}
+      {book && (
+        <div className="mb-6">
+          <ExportButtons
+            bookId={bookId}
+            bookTitle={book.title}
+            ebookFilename={book.ebookFilename}
+            ebookPdfUrl={book.ebookPdfUrl}
+            ebookEpubUrl={book.ebookEpubUrl}
+            onPublishChange={loadData}
+          />
+        </div>
+      )}
 
       {chapters.length === 0 ? (
         <p className="py-10 text-center text-muted">
