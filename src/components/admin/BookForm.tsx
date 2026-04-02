@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "./ImageUpload";
-import { createBook, updateBook } from "@/lib/firestore/books";
 import { getBookCoverPath } from "@/lib/firebase/storage";
 import type { Book } from "@/types";
 
@@ -32,9 +31,17 @@ export function BookForm({ book }: BookFormProps) {
       const data = { title, description, authorName, coverImageUrl, status, order, ebookFilename };
 
       if (book) {
-        await updateBook(book.id, data);
+        await fetch(`/api/admin/books/${book.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       } else {
-        await createBook(data);
+        await fetch("/api/admin/books", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       }
 
       router.push("/admin/books");

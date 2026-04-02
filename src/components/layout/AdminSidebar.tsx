@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -8,14 +9,37 @@ const navItems = [
   { href: "/admin/books", label: "Books", icon: "&#9733;" },
 ];
 
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
-    document.cookie = "admin_session=; path=/; max-age=0";
+    await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
   };
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        await fetch("/api/admin/logout", { method: "POST" });
+        router.push("/admin/login");
+      }, IDLE_TIMEOUT_MS);
+    };
+
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+    };
+  }, [router]);
 
   return (
     <aside className="flex w-56 flex-col border-r border-border bg-card">

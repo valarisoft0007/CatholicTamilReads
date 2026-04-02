@@ -1,0 +1,70 @@
+# Catholic Reads - Trail 5
+
+## Docs
+- PRD (architecture, data models, features): @docs/PRD.md
+- Progress tracker: @progress.md
+- README (setup guide): @README.md
+
+## Commands
+- Dev: `npm run dev` (uses Turbopack)
+- Build: `npm run build`
+- Start: `npm start`
+- Lint: `npm run lint`
+
+## Tech Stack
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Firebase: Firestore (database) + Auth (user accounts)
+- Cloudinary for image uploads/CDN
+- Tailwind CSS 4 for styling
+- Tiptap for rich text editing (admin)
+- jose for JWT admin auth
+- SWR for data fetching
+- next-themes for dark/light mode
+
+## Architecture
+- Monolithic Next.js app — no separate backend
+- Pages and API routes in `src/app/`
+- Reusable components in `src/components/` organized by feature: layout/, auth/, books/, reader/, admin/
+- Service layer in `src/lib/firestore/` — all Firestore operations go here, not in components
+- Firebase SDK init in `src/lib/firebase/` (admin.ts for server, client.ts for browser)
+- Types in `src/types/index.ts`
+- Route protection via `src/middleware.ts` (JWT check on /admin/* routes)
+- `src/components/ui/` exists but is empty (placeholder)
+
+## Auth
+- Users: Firebase Auth (email/password) via AuthProvider context + useAuth() hook
+- Admin: Custom JWT with single shared password, stored in httpOnly cookie `admin_session`
+- These are two separate auth systems — do not mix them
+
+## Database (Firestore)
+- Collections: `books`, `books/{bookId}/chapters` (subcollection)
+- User data: `users/{uid}/readingProgress`, `users/{uid}/bookmarks`, `users/{uid}/favorites`
+- Bookmarks and favorites denormalize titles/covers to avoid extra reads
+- Always use serverTimestamp() for createdAt/updatedAt fields
+- Book.chapterCount is auto-incremented/decremented on chapter create/delete
+- Indexes defined in `firestore.indexes.json` (status + order for books and chapters)
+
+## API Routes
+- POST `/api/admin/login` — admin password auth, returns JWT cookie
+- GET `/api/admin/verify` — check admin session validity
+- POST `/api/admin/upload` — image upload to Cloudinary (5MB max, images only)
+- POST `/api/reading-progress` — save user reading progress (Firebase Bearer token)
+- GET `/api/admin/books/[bookId]/export?format=pdf|epub` — generate & download eBook (planned)
+- POST `/api/admin/books/[bookId]/export/publish` — publish eBook to Cloudinary (planned)
+- POST `/api/admin/books/[bookId]/export/unpublish` — remove published eBook (planned)
+
+## Styling
+- Tailwind CSS with CSS custom properties for theming (defined in globals.css)
+- Two themes: Vatican Ivory (light) and Cathedral Dark (dark) via next-themes
+- Fonts: Inter (UI/sans) and Lora (content/serif) from Google Fonts
+- Chapter content uses `.chapter-content` class with prose styling and drop cap
+
+## Conventions
+- Path alias: `@/*` maps to `src/*`
+- Client components must have `"use client"` directive
+- Image optimization configured for Cloudinary and Firebase Storage domains in next.config.ts
+- Environment variables: NEXT_PUBLIC_* for client, others are server-only
+- See `.env.example` for all required env vars
+- No test framework configured yet
+- No CI/CD or Docker configured
+- eBook export feature planned — see docs/PRD.md §11 and progress.md for details

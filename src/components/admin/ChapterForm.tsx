@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RichTextEditor } from "./RichTextEditor";
-import { createChapter, updateChapter } from "@/lib/firestore/chapters";
 import type { Chapter } from "@/types";
 
 interface ChapterFormProps {
@@ -30,9 +29,17 @@ export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
       const data = { title, content, order, status };
 
       if (chapter) {
-        await updateChapter(bookId, chapter.id, data);
+        await fetch(`/api/admin/books/${bookId}/chapters/${chapter.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       } else {
-        await createChapter(bookId, data);
+        await fetch(`/api/admin/books/${bookId}/chapters`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       }
 
       router.push(`/admin/books/${bookId}/chapters`);
