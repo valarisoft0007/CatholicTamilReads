@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { adminDb } from "@/lib/firebase/admin";
+import { createRateLimiter } from "@/lib/rate-limit";
+
+const checkLimit = createRateLimiter(10, 60 * 60_000); // 10 requests per hour per IP
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -12,6 +15,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ bookId: string }> }
 ) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  if (!checkLimit(ip)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const { bookId } = await params;
   const format = request.nextUrl.searchParams.get("format");
 

@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAllBooks, deleteBook } from "@/lib/firestore/books";
+import { getAllBooks } from "@/lib/firestore/books";
 import type { Book } from "@/types";
 
 export default function AdminBooksPage() {
@@ -23,7 +23,7 @@ export default function AdminBooksPage() {
 
   const handleDelete = async (bookId: string, title: string) => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
-    await deleteBook(bookId);
+    await fetch(`/api/admin/books/${bookId}`, { method: "DELETE" });
     loadBooks();
   };
 

@@ -23,6 +23,8 @@ export default function AdminLoginPage() {
 
       if (res.ok) {
         router.push("/admin");
+      } else if (res.status === 429) {
+        setError("Too many attempts. Please wait 15 minutes.");
       } else {
         setError("Invalid password");
       }

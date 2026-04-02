@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getBook } from "@/lib/firestore/books";
-import { getAllChapters, deleteChapter } from "@/lib/firestore/chapters";
+import { getAllChapters } from "@/lib/firestore/chapters";
 import { ExportButtons } from "@/components/admin/ExportButtons";
 import type { Book, Chapter } from "@/types";
 
@@ -32,7 +32,7 @@ export default function AdminChaptersPage() {
 
   const handleDelete = async (chapterId: string, title: string) => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
-    await deleteChapter(bookId, chapterId);
+    await fetch(`/api/admin/books/${bookId}/chapters/${chapterId}`, { method: "DELETE" });
     loadData();
   };
 
