@@ -2,10 +2,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Books & Chapters ────────────────────────────────────────────────────
-    // Reads are open — books are public content.
-    // All writes go through Admin SDK API routes (/api/admin/books/*) and
-    // bypass these rules, so client writes are blocked entirely.
     match /books/{bookId} {
       allow read: if true;
       allow write: if false;
@@ -16,24 +12,27 @@ service cloud.firestore {
       }
     }
 
-    // ── User Profiles ───────────────────────────────────────────────────────
-    // Created from the client during first sign-in (Google / email link).
-    // Only the owner can read or write their own profile doc.
+    // ── News ────────────────────────────────────────────────────────────────
+    // Reads are open — news items are public content.
+    // All writes go through Admin SDK API routes (/api/admin/news/*) and
+    // bypass these rules, so client writes are blocked entirely.
+    match /news/{newsId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /users/{uid} {
       allow read, create, update: if request.auth != null && request.auth.uid == uid;
       allow delete: if false;
 
-      // Reading progress — owner only
       match /readingProgress/{bookId} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
 
-      // Bookmarks — owner only
       match /bookmarks/{bookmarkId} {
         allow read, write, delete: if request.auth != null && request.auth.uid == uid;
       }
 
-      // Favorites — owner only
       match /favorites/{bookId} {
         allow read, write, delete: if request.auth != null && request.auth.uid == uid;
       }

@@ -1,4 +1,4 @@
-# Catholic Reads - Trail 5
+# Catholic Tamil Reads - Trail 5
 
 ## Docs
 - PRD (architecture, data models, features): @docs/PRD.md
@@ -37,7 +37,7 @@
 - These are two separate auth systems — do not mix them
 
 ## Database (Firestore)
-- Collections: `books`, `books/{bookId}/chapters` (subcollection)
+- Collections: `books`, `books/{bookId}/chapters` (subcollection), `news` (admin-managed announcements)
 - User data: `users/{uid}/readingProgress`, `users/{uid}/bookmarks`, `users/{uid}/favorites`
 - Bookmarks and favorites denormalize titles/covers to avoid extra reads
 - Always use serverTimestamp() for createdAt/updatedAt fields
@@ -49,6 +49,10 @@
 - GET `/api/admin/verify` — check admin session validity
 - POST `/api/admin/upload` — image upload to Cloudinary (5MB max, images only)
 - POST `/api/reading-progress` — save user reading progress (Firebase Bearer token)
+- GET `/api/admin/news` — list all news items (newest first)
+- POST `/api/admin/news` — create a news item
+- PATCH `/api/admin/news/[newsId]` — update a news item
+- DELETE `/api/admin/news/[newsId]` — delete a news item
 - GET `/api/admin/books/[bookId]/export?format=pdf|epub` — generate & download eBook (planned)
 - POST `/api/admin/books/[bookId]/export/publish` — publish eBook to Cloudinary (planned)
 - POST `/api/admin/books/[bookId]/export/unpublish` — remove published eBook (planned)

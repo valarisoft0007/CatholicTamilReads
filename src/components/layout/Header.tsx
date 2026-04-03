@@ -37,7 +37,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-gold text-base sm:text-xl">&#10013;</span>
           <span className="text-base font-semibold tracking-tight sm:text-xl">
-            Catholic Reads
+            Catholic Tamil Reads
           </span>
         </Link>
 

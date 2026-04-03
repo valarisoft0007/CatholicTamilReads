@@ -57,3 +57,11 @@ export interface ReadingProgress {
   scrollPosition: number;
   updatedAt: Timestamp;
 }
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
