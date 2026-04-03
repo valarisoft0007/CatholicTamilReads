@@ -1,4 +1,4 @@
-# Catholic Reads - Development Progress
+# Catholic Tamil Reads - Development Progress
 
 ## Status Legend
 - [x] Completed
@@ -81,6 +81,7 @@
 - [x] Image upload to Cloudinary (covers + chapter images)
 - [x] Draft/Published status toggle
 - [x] Display order management
+- [x] News management (add/delete items shown on home page sidebar)
 - [ ] Bulk operations (publish/unpublish multiple)
 - [ ] Chapter reordering via drag-and-drop
 - [ ] Content preview before publishing
@@ -106,6 +107,7 @@
 - [x] Bookmarks operations (src/lib/firestore/bookmarks.ts)
 - [x] Favorites operations (src/lib/firestore/bookmarks.ts)
 - [x] Reading progress operations (src/lib/firestore/reading-progress.ts)
+- [x] News read operations (src/lib/firestore/news.ts)
 - [x] Image upload via API route (src/lib/firebase/storage.ts)
 - [ ] Data validation / sanitization layer
 - [ ] Firestore security rules
@@ -151,13 +153,13 @@
 | Authentication | 7 | 4 |
 | Public Pages | 8 | 3 |
 | Reader Features | 11 | 5 |
-| Admin Panel | 14 | 5 |
+| Admin Panel | 15 | 5 |
 | Theming & UI | 8 | 3 |
-| Data Layer | 6 | 4 |
+| Data Layer | 7 | 4 |
 | DevOps & Quality | 0 | 10 |
 | Security | 13 | 2 |
 | eBook Export | 20 | 0 |
-| **Total** | **96** | **36** |
+| **Total** | **98** | **36** |
 
 **Overall Progress: ~73% complete**
 

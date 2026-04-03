@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: "&#9632;" },
   { href: "/admin/books", label: "Books", icon: "&#9733;" },
+  { href: "/admin/news", label: "News", icon: "&#9741;" },
 ];
 
 const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes

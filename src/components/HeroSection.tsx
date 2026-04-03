@@ -137,7 +137,7 @@ export function HeroSection() {
       {/* Text Content */}
       <div className="text-center px-4">
         <h1 className="mb-4 font-serif text-3xl font-bold tracking-tight sm:text-5xl">
-          Catholic Reads
+          Catholic Tamil Reads
         </h1>
         <p className="mx-auto mb-8 max-w-md text-base text-muted sm:text-lg">
           Inspiring books, delivered chapter by chapter.

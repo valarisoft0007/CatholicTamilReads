@@ -17,9 +17,9 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Catholic Reads",
+  title: "Catholic Tamil Reads",
   description:
-    "A Catholic book website — read inspiring books chapter by chapter.",
+    "A Catholic Tamil book website — read inspiring books chapter by chapter.",
 };
 
 export default function RootLayout({

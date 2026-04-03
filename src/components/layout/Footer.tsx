@@ -32,7 +32,7 @@ export function Footer() {
 
         <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted">
           <span className="text-gold/40">&#10013;</span>
-          <p>&copy; {new Date().getFullYear()} Catholic Reads</p>
+          <p>&copy; {new Date().getFullYear()} Catholic Tamil Reads</p>
         </div>
       </div>
     </footer>

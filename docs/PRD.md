@@ -1,18 +1,19 @@
-# Catholic Reads - Product Requirements Document
+# Catholic Tamil Reads - Product Requirements Document
 
 > **Related docs**: [README.md](../README.md) (setup guide) | [progress.md](../progress.md) (dev tracker) | [CLAUDE.md](../.claude/CLAUDE.md) (Claude Code instructions)
 
 ## 1. Project Overview
 
-**Product Name**: Catholic Reads
+**Product Name**: Catholic Tamil Reads
+**Domain**: https://www.catholictamilreads.com
 **Prototype**: Trail 5
-**Type**: Full-stack online book reading platform with Catholic theme
+**Type**: Full-stack online book reading platform for Catholic Tamil literature
 **Architecture**: Monolithic Next.js application with Firebase backend
-**Status**: ~72% complete (see [progress.md](../progress.md) for details)
+**Status**: ~73% complete (see [progress.md](../progress.md) for details)
 
 ### Purpose
 
-A chapter-by-chapter book reading platform designed for Catholic literature. Readers can browse, read, bookmark, and track their progress through published books. Administrators manage content through a built-in admin panel with a rich text editor.
+A chapter-by-chapter book reading platform designed for Catholic Tamil literature. Readers can browse, read, bookmark, and track their progress through published books. Administrators manage content through a built-in admin panel with a rich text editor.
 
 ---
 
@@ -104,6 +105,7 @@ src/
 │   │   ├── layout.tsx                # Admin layout with sidebar
 │   │   ├── page.tsx                  # Admin dashboard
 │   │   ├── login/page.tsx            # Admin login
+│   │   ├── news/page.tsx             # News management (add/delete items)
 │   │   └── books/
 │   │       ├── page.tsx              # Book list management
 │   │       ├── new/page.tsx          # Create new book
@@ -117,7 +119,11 @@ src/
 │       ├── admin/
 │       │   ├── login/route.ts        # POST: Admin JWT login
 │       │   ├── verify/route.ts       # GET: Verify admin session
-│       │   └── upload/route.ts       # POST: Image upload to Cloudinary
+│       │   ├── logout/route.ts       # POST: Clear admin session cookie
+│       │   ├── upload/route.ts       # POST: Image upload to Cloudinary
+│       │   └── news/
+│       │       ├── route.ts          # GET: List news | POST: Create news item
+│       │       └── [newsId]/route.ts # PATCH: Update | DELETE: Remove news item
 │       └── reading-progress/route.ts # POST: Save reading progress
 ├── components/
 │   ├── layout/
@@ -145,6 +151,7 @@ src/
 │   │   └── ImageUpload.tsx           # Image upload with preview
 │   ├── ui/                           # Generic UI components (placeholder)
 │   ├── HeroSection.tsx               # Landing page hero
+│   ├── NewsPanel.tsx                 # News cards — responsive grid between hero and books
 │   ├── ThemeProvider.tsx             # next-themes wrapper
 │   └── ThemeToggle.tsx               # Dark/light mode toggle
 ├── hooks/
@@ -159,7 +166,8 @@ src/
 │       ├── books.ts                  # Book CRUD operations (reads only — writes via API routes)
 │       ├── chapters.ts               # Chapter CRUD operations (reads only — writes via API routes)
 │       ├── bookmarks.ts              # Bookmarks & favorites operations
-│       └── reading-progress.ts       # Reading progress tracking
+│       ├── reading-progress.ts       # Reading progress tracking
+│       └── news.ts                   # News items (reads only — writes via API routes)
 ├── types/
 │   └── index.ts                      # All TypeScript interfaces
 └── middleware.ts                     # Admin route protection (JWT)
@@ -175,6 +183,8 @@ src/
 books/                              # Top-level collection
   └── {bookId}/
       └── chapters/                 # Subcollection per book
+
+news/                               # Top-level collection (admin-managed announcements)
 
 users/                              # Implicit via Firebase Auth
   └── {uid}/
@@ -238,6 +248,15 @@ users/                              # Implicit via Firebase Auth
 | coverImageUrl | string | Denormalized for display |
 | createdAt | Timestamp | Server timestamp |
 
+#### NewsItem
+| Field | Type | Description |
+|-------|------|-------------|
+| id | string | Document ID |
+| title | string | News headline |
+| content | string | News body text |
+| createdAt | Timestamp | Server timestamp |
+| updatedAt | Timestamp | Server timestamp |
+
 #### UserProfile
 | Field | Type | Description |
 |-------|------|-------------|
@@ -252,6 +271,7 @@ users/                              # Implicit via Firebase Auth
 |------------|--------|---------|
 | books | status (ASC) + order (ASC) | Published books sorted by display order |
 | chapters | status (ASC) + order (ASC) | Published chapters sorted by sequence |
+| news | createdAt (DESC) | News items sorted newest-first |
 
 ### 4.4 Firestore Security Rules
 
@@ -261,6 +281,7 @@ Rules are defined in `firestore.rules` and deployed via `firebase deploy --only 
 |------------|-------------|--------------|-------|
 | `books` | ✅ public | ❌ blocked | Admin writes via Admin SDK API routes |
 | `books/*/chapters` | ✅ public | ❌ blocked | Admin writes via Admin SDK API routes |
+| `news` | ✅ public | ❌ blocked | Admin writes via Admin SDK API routes |
 | `users/{uid}` | owner only | owner only | `request.auth.uid == uid` |
 | `users/{uid}/readingProgress` | owner only | owner only | |
 | `users/{uid}/bookmarks` | owner only | owner only | |
@@ -341,6 +362,10 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 | PATCH | `/api/admin/books/[bookId]/chapters/[chapterId]` | Admin JWT cookie | Update chapter fields |
 | DELETE | `/api/admin/books/[bookId]/chapters/[chapterId]` | Admin JWT cookie | Delete a chapter (decrements chapterCount) |
 | POST | `/api/reading-progress` | Firebase Bearer token | Saves reading progress to Firestore |
+| GET | `/api/admin/news` | Admin JWT cookie | List all news items (newest first) |
+| POST | `/api/admin/news` | Admin JWT cookie | Create a news item |
+| PATCH | `/api/admin/news/[newsId]` | Admin JWT cookie | Update a news item |
+| DELETE | `/api/admin/news/[newsId]` | Admin JWT cookie | Delete a news item |
 
 ---
 
@@ -410,11 +435,24 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - Animated floating icons: cross, bible, rosary, candle
 - Welcome text and call-to-action
 
+#### Home Page Layout
+- News panel renders between the hero section and the books grid
+- Responsive grid: 1 column (mobile), 2 columns (sm), 3 columns (lg+)
+- Fully visible on all screen sizes — mobile compatible
+- News section only renders when at least one news item exists
+
 ### 7.2 Admin Features
 
 #### Admin Dashboard
 - Statistics cards: Published Books count, Drafts count, Total Chapters count
 - Quick action buttons: "New Book", "Manage Books"
+
+#### News Management
+- Add news items: title + content text
+- List all news items newest-first
+- Delete individual news items
+- Items appear as responsive cards between the hero and books grid (visible on all screen sizes)
+- Panel is hidden when there are no news items
 
 #### Book Management
 - List all books with status badges (published/draft)
