@@ -206,6 +206,7 @@ users/                              # Implicit via Firebase Auth
 | status | "draft" \| "published" | Publication status |
 | chapterCount | number | Auto-managed on chapter create/delete |
 | order | number | Display sort order |
+| isFree | boolean (optional) | If true, all chapters readable without login |
 | createdAt | Timestamp | Server timestamp |
 | updatedAt | Timestamp | Server timestamp |
 
@@ -218,6 +219,7 @@ users/                              # Implicit via Firebase Auth
 | content | string | HTML content from Tiptap editor |
 | order | number | Chapter sequence number |
 | status | "draft" \| "published" | Publication status |
+| isFree | boolean (optional) | If true, this chapter is readable without login |
 | createdAt | Timestamp | Server timestamp |
 | updatedAt | Timestamp | Server timestamp |
 
@@ -303,7 +305,7 @@ The Admin SDK (used in `/api/admin/*` routes) bypasses all security rules.
 - **Email verification**: Guaranteed — Google verifies via OAuth; email link verifies by delivery
 - **New user flow**: First sign-in (either method) auto-creates Firestore `users/{uid}` doc
 - **Email link flow**: User enters email → Firebase sends magic link → `/auth/verify` page completes sign-in → handles "different device" edge case
-- **Reading gate**: Chapter pages require authentication — unauthenticated visitors are redirected to `/auth/signin?redirect=<url>` and returned after sign-in
+- **Reading gate**: Chapter pages require authentication by default — unauthenticated visitors are redirected to `/auth/signin?redirect=<url>` and returned after sign-in. Exception: if `book.isFree === true` (entire book is free) or `chapter.isFree === true` (sample chapter), the chapter is accessible without login.
 
 ### 5.2 Admin Authentication (Custom JWT)
 
@@ -420,7 +422,8 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - Sign in with email magic link (passwordless — Firebase sends a sign-in link)
 - Sign out → redirects to home page
 - User display name shown in header when logged in
-- **Chapter reading requires login** — unauthenticated users redirected to sign-in with return URL
+- **Chapter reading requires login** — unauthenticated users redirected to sign-in with return URL, unless the chapter or its parent book is marked as free
+- **Free access**: Books marked `isFree` are fully readable without login; individual chapters marked `isFree` act as free samples. A "Free" badge is shown on free chapters in the book's table of contents.
 - "Create a free account" hint shown on hero section for unauthenticated visitors
 - `/auth/signup` is an alias for `/auth/signin` — no separate registration form needed
 
@@ -459,12 +462,14 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - Display author name and chapter count per book
 - Actions per book: Edit, View Chapters, Delete
 - Create new book: title, author, description, cover image upload, status, display order
+- **Free book toggle**: Mark entire book as free via checkbox in the Edit Book form — no login required for any chapter. Free books show a green "Free" badge on the home page book cards.
 
 #### Chapter Management
 - List chapters for a book, ordered by chapter number
 - Create chapter: title, content (rich text), order, status
 - Edit chapter: all fields editable
 - Delete chapter (auto-decrements book's chapter count)
+- **Free chapter toggle**: Inline toggle switch per chapter directly on the chapters list — mark individual chapters as free samples without opening the edit form
 
 #### Rich Text Editor (Tiptap)
 - Formatting: Bold, Italic, Underline

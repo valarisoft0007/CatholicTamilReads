@@ -9,6 +9,7 @@ export interface Book {
   status: "draft" | "published";
   chapterCount: number;
   order: number;
+  isFree?: boolean;
   ebookPdfUrl?: string;
   ebookEpubUrl?: string;
   ebookFilename?: string;
@@ -23,6 +24,7 @@ export interface Chapter {
   content: string;
   order: number;
   status: "draft" | "published";
+  isFree?: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

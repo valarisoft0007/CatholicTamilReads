@@ -176,6 +176,7 @@ export default function BookDetailPage() {
         bookId={bookId}
         chapters={chapters}
         progress={progress}
+        bookIsFree={book.isFree}
       />
     </div>
   );

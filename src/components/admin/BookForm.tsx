@@ -21,6 +21,7 @@ export function BookForm({ book }: BookFormProps) {
     book?.status || "draft"
   );
   const [order, setOrder] = useState(book?.order || 0);
+  const [isFree, setIsFree] = useState(book?.isFree || false);
   const [ebookFilename, setEbookFilename] = useState(book?.ebookFilename || "");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +29,7 @@ export function BookForm({ book }: BookFormProps) {
     setSaving(true);
 
     try {
-      const data = { title, description, authorName, coverImageUrl, status, order, ebookFilename };
+      const data = { title, description, authorName, coverImageUrl, status, order, isFree, ebookFilename };
 
       if (book) {
         await fetch(`/api/admin/books/${book.id}`, {
@@ -116,7 +117,7 @@ export function BookForm({ book }: BookFormProps) {
         </p>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Status</label>
           <select
@@ -138,6 +139,19 @@ export function BookForm({ book }: BookFormProps) {
             className="w-24 rounded-md border border-border px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
             min={0}
           />
+        </div>
+
+        <div className="flex flex-col justify-end">
+          <label className="flex cursor-pointer items-center gap-2 pb-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={isFree}
+              onChange={(e) => setIsFree(e.target.checked)}
+              className="h-4 w-4 rounded accent-gold"
+            />
+            Free Book
+            <span className="font-normal text-muted">(no login required)</span>
+          </label>
         </div>
       </div>
 

@@ -27,8 +27,11 @@
 - [x] Admin session via httpOnly cookie
 - [x] Admin route protection (middleware.ts)
 - [x] Admin session verification endpoint
-- [x] Reader registration required to read chapters
+- [x] Reader registration required to read chapters (unless book/chapter marked free)
 - [x] Redirect to sign-in with return URL on protected pages
+- [x] Free access: book-level isFree flag (whole book readable without login)
+- [x] Free access: chapter-level isFree flag (sample chapters readable without login)
+- [x] Free badge shown on free chapters in table of contents
 - [ ] Password reset / forgot password (N/A — passwordless)
 - [ ] Social login (Google, Apple, etc.)
 - [ ] Per-user admin accounts (currently single shared password)
@@ -82,6 +85,8 @@
 - [x] Draft/Published status toggle
 - [x] Display order management
 - [x] News management (add/delete items shown on home page sidebar)
+- [x] Free book toggle — checkbox in BookForm (Edit Book page); Free badge on home page book cards
+- [x] Free chapter toggle — inline toggle switch on chapters list (no need to open chapter edit)
 - [ ] Bulk operations (publish/unpublish multiple)
 - [ ] Chapter reordering via drag-and-drop
 - [ ] Content preview before publishing
@@ -150,18 +155,18 @@
 | Category | Done | Remaining |
 |----------|------|-----------|
 | Core Infrastructure | 9 | 0 |
-| Authentication | 7 | 4 |
+| Authentication | 7 | 7 |
 | Public Pages | 8 | 3 |
 | Reader Features | 11 | 5 |
-| Admin Panel | 15 | 5 |
+| Admin Panel | 15 | 7 |
 | Theming & UI | 8 | 3 |
 | Data Layer | 7 | 4 |
 | DevOps & Quality | 0 | 10 |
 | Security | 13 | 2 |
 | eBook Export | 20 | 0 |
-| **Total** | **98** | **36** |
+| **Total** | **98** | **41** |
 
-**Overall Progress: ~73% complete**
+**Overall Progress: ~70% complete**
 
 ---
 
@@ -188,8 +193,9 @@
 - [x] Fix admin ExportButtons filename — was using broken client-side sanitization via a.download, now uses ebookFilename prop with same NFD normalization chain
 
 ## Next Priority Items
-1. Book search / filtering
-2. Test framework setup
+1. Free access feature (book-level + chapter-level isFree flag)
+2. Book search / filtering
+3. Test framework setup
 4. Input validation middleware
 5. CSRF protection (low priority — SameSite=lax already blocks most attacks)
 

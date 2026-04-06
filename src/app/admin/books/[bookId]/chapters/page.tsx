@@ -36,6 +36,18 @@ export default function AdminChaptersPage() {
     loadData();
   };
 
+  const handleToggleChapterFree = async (chapter: Chapter) => {
+    // Optimistic update
+    setChapters((prev) =>
+      prev.map((c) => (c.id === chapter.id ? { ...c, isFree: !c.isFree } : c))
+    );
+    await fetch(`/api/admin/books/${bookId}/chapters/${chapter.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isFree: !chapter.isFree }),
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-10">
@@ -102,7 +114,25 @@ export default function AdminChaptersPage() {
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex items-center gap-3">
+                {/* Free sample toggle */}
+                <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted">
+                  <button
+                    onClick={() => handleToggleChapterFree(chapter)}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                      chapter.isFree ? "bg-success" : "bg-border"
+                    }`}
+                    aria-label={`Toggle free sample for ${chapter.title}`}
+                  >
+                    <span
+                      className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                        chapter.isFree ? "translate-x-4" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
+                  Free
+                </label>
+
                 <Link
                   href={`/admin/books/${bookId}/chapters/${chapter.id}`}
                   className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-card-hover transition-colors"

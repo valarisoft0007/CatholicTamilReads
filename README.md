@@ -90,8 +90,8 @@ src/
 ## Features
 
 ### Public (Readers)
-- Browse published books with cover images and chapter counts
-- **Login required to read** — sign in with Google or email magic link (passwordless)
+- Browse published books with cover images and chapter counts; free books shown with a **Free** badge
+- **Login required to read** — sign in with Google or email magic link (passwordless); free books and free sample chapters are readable without login
 - Read chapters with customizable font size and progress tracking
 - Auto-save reading progress (scroll position + last chapter)
 - Bookmark chapters and favorite books
@@ -102,7 +102,10 @@ src/
 ### Admin Panel (`/admin`)
 - Dashboard with published/draft book stats
 - Book CRUD with cover image upload
+- **Free book toggle** — mark entire book as free (no login required) via the Edit Book form
 - Chapter CRUD with Tiptap rich text editor
+- **Free chapter toggle** — inline toggle per chapter on the chapters list (no need to open edit form)
+- "Free" badge on book cards and free chapter indicators in table of contents
 - Draft/Published status management
 - Display order configuration
 - Session: 8-hour JWT, 30-minute idle auto-logout

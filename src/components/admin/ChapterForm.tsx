@@ -90,6 +90,8 @@ export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
             <option value="published">Published</option>
           </select>
         </div>
+
+
       </div>
 
       <div>

@@ -7,12 +7,14 @@ interface TableOfContentsProps {
   bookId: string;
   chapters: Chapter[];
   progress?: ReadingProgress | null;
+  bookIsFree?: boolean;
 }
 
 export function TableOfContents({
   bookId,
   chapters,
   progress,
+  bookIsFree,
 }: TableOfContentsProps) {
   if (chapters.length === 0) {
     return (
@@ -31,6 +33,7 @@ export function TableOfContents({
           chapter.order < progress.lastChapterOrder;
         const isCompleted =
           isCurrent && progress && progress.scrollPosition >= 90;
+        const showFreeBadge = bookIsFree || chapter.isFree;
 
         return (
           <Link
@@ -62,7 +65,14 @@ export function TableOfContents({
             </span>
 
             <div className="flex-1">
-              <h3 className="font-medium">{chapter.title}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-medium">{chapter.title}</h3>
+                {showFreeBadge && (
+                  <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
+                    Free
+                  </span>
+                )}
+              </div>
               {isCurrent && progress && (
                 <p className="mt-0.5 text-xs text-gold-dark">
                   Continue reading &middot; {progress.scrollPosition}% complete
