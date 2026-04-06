@@ -33,17 +33,8 @@ export default function ChapterReaderPage() {
   const [allChapters, setAllChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Load data regardless of auth — needed to check isFree before deciding to redirect
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.push(
-        `/auth/signin?redirect=/books/${bookId}/chapters/${chapterId}`
-      );
-    }
-  }, [user, authLoading, bookId, chapterId, router]);
-
-  useEffect(() => {
-    if (authLoading || !user) return;
     async function load() {
       const [b, ch, chapters] = await Promise.all([
         getBook(bookId),
@@ -57,9 +48,22 @@ export default function ChapterReaderPage() {
       window.scrollTo(0, 0);
     }
     load();
-  }, [bookId, chapterId, user, authLoading]);
+  }, [bookId, chapterId]);
 
-  if (authLoading || !user || loading) {
+  // Auth gate: redirect only after both auth and data are resolved, and content is not free
+  useEffect(() => {
+    if (authLoading || loading) return;
+    const isFreeAccess = book?.isFree || chapter?.isFree;
+    if (!isFreeAccess && !user) {
+      router.push(
+        `/auth/signin?redirect=/books/${bookId}/chapters/${chapterId}`
+      );
+    }
+  }, [authLoading, loading, user, book, chapter, bookId, chapterId, router]);
+
+  const isFreeAccess = book?.isFree || chapter?.isFree;
+
+  if (authLoading || loading || (!isFreeAccess && !user)) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10">
         <div className="space-y-4">
@@ -123,12 +127,14 @@ export default function ChapterReaderPage() {
             </div>
             <div className="flex items-center gap-3">
               <FontSizeToggle />
-              <BookmarkButton
-                bookId={bookId}
-                chapterId={chapterId}
-                bookTitle={book.title}
-                chapterTitle={chapter.title}
-              />
+              {user && (
+                <BookmarkButton
+                  bookId={bookId}
+                  chapterId={chapterId}
+                  bookTitle={book.title}
+                  chapterTitle={chapter.title}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -52,6 +52,11 @@ export function BookCard({ book }: BookCardProps) {
             New
           </span>
         )}
+        {book.isFree && (
+          <span className="absolute right-2 top-2 rounded-full bg-success px-2.5 py-0.5 text-xs font-medium text-white shadow-sm">
+            Free
+          </span>
+        )}
       </div>
       <div className="p-4">
         <h3 className="mb-1 font-semibold text-foreground transition-colors duration-200 group-hover:text-gold-dark line-clamp-2">
