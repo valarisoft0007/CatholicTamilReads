@@ -158,15 +158,6 @@ export default function ChapterReaderPage() {
           />
         </div>
 
-        {/* All chapters link */}
-        <div className="mt-6 text-center">
-          <Link
-            href={`/books/${bookId}`}
-            className="text-sm text-muted hover:text-gold transition-colors"
-          >
-            &larr; All Chapters
-          </Link>
-        </div>
       </div>
 
       <BackToTop />
