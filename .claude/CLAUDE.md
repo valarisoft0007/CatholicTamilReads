@@ -32,7 +32,7 @@
 - `src/components/ui/` exists but is empty (placeholder)
 
 ## Auth
-- Users: Firebase Auth (email/password) via AuthProvider context + useAuth() hook
+- Users: Firebase Auth (Google Sign-In only) via AuthProvider context + useAuth() hook
 - Admin: Custom JWT with single shared password, stored in httpOnly cookie `admin_session`
 - These are two separate auth systems — do not mix them
 

@@ -19,8 +19,7 @@
 - [x] Firestore composite indexes
 
 ## Authentication
-- [x] Firebase Auth - Google Sign-In (replaced email/password)
-- [x] Firebase Auth - Email magic link / passwordless sign-in
+- [x] Firebase Auth - Google Sign-In (only sign-in method)
 - [x] Firebase Auth - sign out (redirects to home)
 - [x] Auth context provider (AuthProvider + useAuth hook)
 - [x] Admin JWT authentication (password-based)
@@ -32,8 +31,8 @@
 - [x] Free access: book-level isFree flag (whole book readable without login)
 - [x] Free access: chapter-level isFree flag (sample chapters readable without login)
 - [x] Free badge shown on free chapters in table of contents
-- [ ] Password reset / forgot password (N/A — passwordless)
-- [ ] Social login (Google, Apple, etc.)
+- [ ] Password reset / forgot password (N/A — Google-only)
+- [ ] Social login (Apple, etc.)
 - [ ] Per-user admin accounts (currently single shared password)
 - [ ] Email verification
 
@@ -193,11 +192,24 @@
 - [x] Fix admin ExportButtons filename — was using broken client-side sanitization via a.download, now uses ebookFilename prop with same NFD normalization chain
 
 ## Next Priority Items
-1. Free access feature (book-level + chapter-level isFree flag)
-2. Book search / filtering
-3. Test framework setup
-4. Input validation middleware
-5. CSRF protection (low priority — SameSite=lax already blocks most attacks)
+1. Book search / filtering
+2. Test framework setup
+3. Input validation middleware
+4. CSRF protection (low priority — SameSite=lax already blocks most attacks)
+5. Donation feature (blocked — awaiting Razorpay + PayPal account setup)
+
+## Donation Feature (Planned — Blocked on Gateway Accounts)
+- [ ] Razorpay account KYC + API keys (India payments)
+- [ ] PayPal Business account + API credentials (International payments)
+- [ ] Donation type in src/types/index.ts
+- [ ] Firestore donations service (src/lib/firestore/donations.ts)
+- [ ] Razorpay order + webhook API routes
+- [ ] PayPal order, capture + webhook API routes
+- [ ] DonationModal component (free-form amount, registered user only, Tamil thank-you)
+- [ ] DonationSection on home page
+- [ ] "Support Us" button in Footer
+- [ ] .env.example updated with gateway env vars
+- See full spec: docs/donation-feature-plan.md
 
 ## Admin Login Hardening (completed)
 - [x] Rate limiting — 5 failed attempts / 15 min per IP → 429

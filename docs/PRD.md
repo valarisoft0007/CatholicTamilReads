@@ -92,9 +92,8 @@ src/
 │   ├── page.tsx                      # Home page (hero + book grid)
 │   ├── globals.css                   # Theme variables + global styles
 │   ├── auth/
-│   │   ├── signin/page.tsx           # User sign-in page (Google + email magic link)
-│   │   ├── signup/page.tsx           # Alias — renders same sign-in page
-│   │   └── verify/page.tsx           # Email magic link callback handler
+│   │   ├── signin/page.tsx           # User sign-in page (Google only)
+│   │   └── signup/page.tsx           # Alias — renders same sign-in page
 │   ├── books/
 │   │   └── [bookId]/
 │   │       ├── page.tsx              # Book detail page
@@ -131,8 +130,8 @@ src/
 │   │   ├── Footer.tsx                # Site footer with links
 │   │   └── AdminSidebar.tsx          # Admin navigation sidebar
 │   ├── auth/
-│   │   ├── AuthProvider.tsx          # Firebase auth context provider (Google + email link)
-│   │   └── SignInForm.tsx            # Google button + email magic link form
+│   │   ├── AuthProvider.tsx          # Firebase auth context provider (Google)
+│   │   └── SignInForm.tsx            # Google sign-in button
 │   ├── books/
 │   │   ├── BookGrid.tsx              # Grid display of published books
 │   │   ├── BookCard.tsx              # Individual book card component
@@ -297,14 +296,13 @@ The Admin SDK (used in `/api/admin/*` routes) bypasses all security rules.
 
 ### 5.1 User Authentication (Firebase Auth)
 
-- **Methods**: Google Sign-In (OAuth popup) + Email Magic Link (passwordless)
+- **Methods**: Google Sign-In (OAuth popup) — only sign-in method
 - **Provider**: Firebase Authentication SDK
 - **Client-side**: `AuthProvider` context wraps the app, `useAuth()` hook provides `user`, `loading`, `signOut()`, `signInWithGoogle()`
 - **Session**: Managed by Firebase SDK (persistent browser session)
 - **API Protection**: Firebase ID token sent as Bearer token in Authorization header
-- **Email verification**: Guaranteed — Google verifies via OAuth; email link verifies by delivery
-- **New user flow**: First sign-in (either method) auto-creates Firestore `users/{uid}` doc
-- **Email link flow**: User enters email → Firebase sends magic link → `/auth/verify` page completes sign-in → handles "different device" edge case
+- **Email verification**: Guaranteed — Google verifies via OAuth
+- **New user flow**: First sign-in auto-creates Firestore `users/{uid}` doc
 - **Reading gate**: Chapter pages require authentication by default — unauthenticated visitors are redirected to `/auth/signin?redirect=<url>` and returned after sign-in. Exception: if `book.isFree === true` (entire book is free) or `chapter.isFree === true` (sample chapter), the chapter is accessible without login.
 
 ### 5.2 Admin Authentication (Custom JWT)
@@ -418,8 +416,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - **Bookmarked Chapters**: List of bookmarked chapters across all books with remove option
 
 #### Authentication
-- Sign in with Google (one-click OAuth popup)
-- Sign in with email magic link (passwordless — Firebase sends a sign-in link)
+- Sign in with Google (one-click OAuth popup) — only sign-in method
 - Sign out → redirects to home page
 - User display name shown in header when logged in
 - **Chapter reading requires login** — unauthenticated users redirected to sign-in with return URL, unless the chapter or its parent book is marked as free
