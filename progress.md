@@ -66,7 +66,7 @@
 - [ ] Notes per chapter
 - [ ] Share chapter / book
 - [ ] Offline reading (PWA/Service Worker)
-- [ ] Audio narration / text-to-speech
+- [ ] Audio narration / text-to-speech — See full spec: docs/audio-tts-feature-plan.md
 
 ## Admin Panel
 - [x] Admin dashboard with stats (published, drafts, chapters)

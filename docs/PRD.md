@@ -625,7 +625,35 @@ src/components/books/
 
 ---
 
-## 12. Known Limitations & Future Considerations
+## 12. Planned Feature: Audio Narration / Text-to-Speech
+
+### Overview
+
+Generate audio narration for chapter content using a TTS API, allowing readers to listen to Tamil chapters. Admin-triggered per chapter; audio stored on Cloudinary and linked from the chapter document.
+
+**Status**: Planned — Next Version  
+**Full Spec**: [docs/audio-tts-feature-plan.md](audio-tts-feature-plan.md)
+
+### Recommended Service
+
+**Google Cloud Text-to-Speech** — best Tamil language support (`ta-IN` locale), ~$4/1M characters.
+
+### Data Model Change
+
+Add optional `audioUrl?: string` field to the `Chapter` document.
+
+### New API Route
+
+`POST /api/admin/books/[bookId]/chapters/[chapterId]/audio` (admin JWT) — strips HTML from `chapter.content`, sends to Google TTS, uploads MP3 to Cloudinary, saves `audioUrl` to Firestore.
+
+### UI Changes
+
+- **Admin**: "Generate Audio" button per chapter in the chapter editor
+- **Reader**: Audio player shown in chapter reader when `audioUrl` is present
+
+---
+
+## 13. Known Limitations & Future Considerations
 
 1. **No test coverage** — No unit, integration, or e2e test framework configured
 2. **Single admin password** — All admins share one password; no per-user admin accounts

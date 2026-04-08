@@ -6,7 +6,7 @@ A chapter-by-chapter Catholic book reading platform built with Next.js, Firebase
 
 - **Framework**: Next.js 16 (App Router) + React 19 + TypeScript
 - **Database**: Google Cloud Firestore (NoSQL)
-- **Auth**: Firebase Authentication — Google Sign-In + Email Magic Link (users) + Custom JWT (admin)
+- **Auth**: Firebase Authentication — Google Sign-In only (users) + Custom JWT (admin)
 - **Image CDN**: Cloudinary
 - **Styling**: Tailwind CSS 4 + next-themes (dark/light mode)
 - **Editor**: Tiptap (WYSIWYG rich text for admin)
@@ -18,7 +18,6 @@ A chapter-by-chapter Catholic book reading platform built with Next.js, Firebase
 - npm
 - Firebase project with Firestore and Authentication enabled
   - Enable **Google** sign-in provider
-  - Enable **Email/Password** + **Email link (passwordless sign-in)**
 - Cloudinary account
 
 ### Setup
@@ -37,7 +36,7 @@ A chapter-by-chapter Catholic book reading platform built with Next.js, Firebase
    - Firebase Admin SDK credentials (`FIREBASE_ADMIN_*`)
    - Admin password and JWT secret (`ADMIN_PASSWORD`, `ADMIN_JWT_SECRET`)
    - Cloudinary credentials (`CLOUDINARY_*`)
-   - App base URL for email magic links (`NEXT_PUBLIC_APP_URL`):
+   - App base URL (`NEXT_PUBLIC_APP_URL`):
      - Development: `NEXT_PUBLIC_APP_URL=http://localhost:3000`
      - Production: `NEXT_PUBLIC_APP_URL=https://your-app.vercel.app`
 
@@ -91,7 +90,7 @@ src/
 
 ### Public (Readers)
 - Browse published books with cover images and chapter counts; free books shown with a **Free** badge
-- **Login required to read** — sign in with Google or email magic link (passwordless); free books and free sample chapters are readable without login
+- **Login required to read** — sign in with Google; free books and free sample chapters are readable without login
 - Read chapters with customizable font size and progress tracking
 - Auto-save reading progress (scroll position + last chapter)
 - Bookmark chapters and favorite books
