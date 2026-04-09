@@ -11,6 +11,8 @@ import { getProgress } from "@/lib/firestore/reading-progress";
 import { TableOfContents } from "@/components/books/TableOfContents";
 import { DownloadButtons } from "@/components/books/DownloadButtons";
 import { useAuth } from "@/hooks/useAuth";
+import { getClientAnalytics } from "@/lib/firebase/client";
+import { logEvent } from "firebase/analytics";
 import type { Book, Chapter, ReadingProgress } from "@/types";
 
 export default function BookDetailPage() {
@@ -29,6 +31,19 @@ export default function BookDetailPage() {
       ]);
       setBook(b);
       setChapters(c);
+
+      // Track book view (fire-and-forget)
+      if (b?.status === "published") {
+        fetch("/api/analytics/view", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "book", bookId }),
+        }).catch(() => {});
+
+        getClientAnalytics().then((a) => {
+          if (a) logEvent(a, "book_view", { book_id: bookId, book_title: b.title });
+        }).catch(() => {});
+      }
 
       if (user) {
         const p = await getProgress(user.uid, bookId);

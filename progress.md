@@ -89,7 +89,7 @@
 - [ ] Bulk operations (publish/unpublish multiple)
 - [x] Chapter reordering via drag-and-drop (@dnd-kit, batch Firestore write, optimistic UI)
 - [x] Content preview before publishing (live modal in ChapterForm, reuses ChapterContent)
-- [ ] Analytics dashboard (views, read time, popular books) — See full spec: docs/analytics-feature-plan.md
+- [x] Analytics dashboard (views, read time, popular books) — Firestore viewCount + Firebase Analytics events; see docs/analytics-feature-plan.md
 - [ ] User management panel
 
 ## Theming & UI
@@ -157,13 +157,13 @@
 | Authentication | 7 | 7 |
 | Public Pages | 8 | 3 |
 | Reader Features | 11 | 5 |
-| Admin Panel | 17 | 5 |
+| Admin Panel | 18 | 4 |
 | Theming & UI | 8 | 3 |
 | Data Layer | 7 | 4 |
 | DevOps & Quality | 0 | 10 |
 | Security | 13 | 2 |
 | eBook Export | 20 | 0 |
-| **Total** | **100** | **39** |
+| **Total** | **101** | **38** |
 
 **Overall Progress: ~70% complete**
 
