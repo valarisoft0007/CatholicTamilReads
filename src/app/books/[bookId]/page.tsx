@@ -58,7 +58,7 @@ export default function BookDetailPage() {
   if (loading) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-10">
-        <div className="flex gap-6">
+        <div className="flex flex-col gap-6 sm:flex-row">
           <div className="skeleton h-56 w-40 shrink-0 rounded-lg" />
           <div className="flex-1 space-y-3">
             <div className="skeleton h-8 w-2/3" />
@@ -94,10 +94,10 @@ export default function BookDetailPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       {/* Book header */}
-      <div className="mb-10 flex gap-6">
+      <div className="mb-10 flex flex-col gap-6 sm:flex-row">
         {/* 3D Book Cover */}
         <div
-          className="relative h-56 w-40 shrink-0 overflow-hidden rounded-lg sm:h-72 sm:w-48"
+          className="relative mx-auto h-56 w-40 shrink-0 overflow-hidden rounded-lg sm:mx-0 sm:h-72 sm:w-48"
           style={{
             boxShadow:
               "6px 6px 12px rgba(0,0,0,0.15), 2px 2px 4px rgba(0,0,0,0.1), inset -2px 0 4px rgba(0,0,0,0.05)",

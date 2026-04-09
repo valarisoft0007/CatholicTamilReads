@@ -33,6 +33,7 @@ A chapter-by-chapter Catholic book reading platform built with Next.js, Firebase
    ```
 4. Configure `.env.local` with:
    - Firebase Client SDK keys (`NEXT_PUBLIC_FIREBASE_*`)
+   - Firebase Measurement ID (`NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`) — from Firebase Console → Project Settings → Your apps → measurementId
    - Firebase Admin SDK credentials (`FIREBASE_ADMIN_*`)
    - Admin password and JWT secret (`ADMIN_PASSWORD`, `ADMIN_JWT_SECRET`)
    - Cloudinary credentials (`CLOUDINARY_*`)
@@ -99,11 +100,13 @@ src/
 - Responsive design with mobile navigation
 
 ### Admin Panel (`/admin`)
-- Dashboard with published/draft book stats
+- Dashboard with published/draft/chapter stats, **total views**, and **top books by views**
 - Book CRUD with cover image upload
 - **Free book toggle** — mark entire book as free (no login required) via the Edit Book form
 - Chapter CRUD with Tiptap rich text editor
 - **Free chapter toggle** — inline toggle per chapter on the chapters list (no need to open edit form)
+- **Chapter drag-and-drop reorder** — drag handle on each row; batch Firestore write via `PATCH /api/admin/books/[bookId]/chapters/reorder`
+- **Content preview modal** — preview chapter content before saving using the same reader prose styles
 - "Free" badge on book cards and free chapter indicators in table of contents
 - Draft/Published status management
 - Display order configuration
@@ -113,6 +116,10 @@ src/
 - Chapter HTML content sanitized at render time via `isomorphic-dompurify` (XSS prevention)
 - CSP + `X-Content-Type-Options` + `X-Frame-Options` + `Referrer-Policy` headers on all responses (`next.config.ts`)
 - Reader API rate limiting: `/api/reading-progress` (30 req/min), `/api/books/[bookId]/download` (10 req/hr)
+
+### Analytics
+- **Firestore view counters** — `viewCount` on book and chapter documents, incremented server-side via `POST /api/analytics/view` (rate-limited: 5/hour per IP per book)
+- **Firebase Analytics** — `book_view` and `chapter_view` events logged client-side; visible in Firebase Console with time-series and demographics
 
 ## Database Schema (Firestore)
 
@@ -141,6 +148,8 @@ users/{uid}                             # User documents (via Firebase Auth)
 | PATCH | `/api/admin/books/[bookId]/chapters/[chapterId]` | JWT cookie | Update chapter |
 | DELETE | `/api/admin/books/[bookId]/chapters/[chapterId]` | JWT cookie | Delete chapter |
 | POST | `/api/reading-progress` | Firebase token | Save reading progress |
+| PATCH | `/api/admin/books/[bookId]/chapters/reorder` | JWT cookie | Batch reorder chapters |
+| POST | `/api/analytics/view` | None (public) | Increment book/chapter view counter (rate-limited) |
 
 ## Environment Variables
 
