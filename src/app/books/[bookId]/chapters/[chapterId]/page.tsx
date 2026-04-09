@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { getClientAnalytics } from "@/lib/firebase/client";
+import { logEvent } from "firebase/analytics";
 import { getBook } from "@/lib/firestore/books";
 import { getChapter, getPublishedChapters } from "@/lib/firestore/chapters";
 import { ChapterContent } from "@/components/reader/ChapterContent";
@@ -46,6 +48,19 @@ export default function ChapterReaderPage() {
       setAllChapters(chapters);
       setLoading(false);
       window.scrollTo(0, 0);
+
+      // Track chapter view (fire-and-forget)
+      if (ch?.status === "published") {
+        fetch("/api/analytics/view", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "chapter", bookId, chapterId }),
+        }).catch(() => {});
+
+        getClientAnalytics().then((a) => {
+          if (a) logEvent(a, "chapter_view", { book_id: bookId, chapter_id: chapterId, chapter_title: ch.title });
+        }).catch(() => {});
+      }
     }
     load();
   }, [bookId, chapterId]);
