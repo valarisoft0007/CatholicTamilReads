@@ -13,10 +13,11 @@
 
 ## Tech Stack
 - Next.js 16 (App Router) + React 19 + TypeScript
-- Firebase: Firestore (database) + Auth (user accounts)
+- Firebase: Firestore (database) + Auth (user accounts) + Analytics (event tracking)
 - Cloudinary for image uploads/CDN
 - Tailwind CSS 4 for styling
 - Tiptap for rich text editing (admin)
+- @dnd-kit for drag-and-drop chapter reordering (admin)
 - jose for JWT admin auth
 - SWR for data fetching
 - next-themes for dark/light mode
@@ -42,6 +43,7 @@
 - Bookmarks and favorites denormalize titles/covers to avoid extra reads
 - Always use serverTimestamp() for createdAt/updatedAt fields
 - Book.chapterCount is auto-incremented/decremented on chapter create/delete
+- Book.viewCount and Chapter.viewCount — incremented server-side via Admin SDK on each view (rate-limited)
 - Indexes defined in `firestore.indexes.json` (status + order for books and chapters)
 
 ## API Routes
@@ -53,9 +55,11 @@
 - POST `/api/admin/news` — create a news item
 - PATCH `/api/admin/news/[newsId]` — update a news item
 - DELETE `/api/admin/news/[newsId]` — delete a news item
-- GET `/api/admin/books/[bookId]/export?format=pdf|epub` — generate & download eBook (planned)
-- POST `/api/admin/books/[bookId]/export/publish` — publish eBook to Cloudinary (planned)
-- POST `/api/admin/books/[bookId]/export/unpublish` — remove published eBook (planned)
+- PATCH `/api/admin/books/[bookId]/chapters/reorder` — batch reorder chapters (JWT cookie, Firestore WriteBatch)
+- POST `/api/analytics/view` — increment book/chapter viewCount (public, rate-limited 5/hr per IP per book)
+- GET `/api/admin/books/[bookId]/export?format=pdf|epub` — generate & download eBook
+- POST `/api/admin/books/[bookId]/export/publish` — publish eBook to Cloudinary
+- POST `/api/admin/books/[bookId]/export/unpublish` — remove published eBook
 
 ## Styling
 - Tailwind CSS with CSS custom properties for theming (defined in globals.css)
@@ -71,4 +75,6 @@
 - See `.env.example` for all required env vars
 - No test framework configured yet
 - No CI/CD or Docker configured
-- eBook export feature planned — see docs/PRD.md §11 and progress.md for details
+- Analytics: Firestore viewCount (server-side) + Firebase Analytics events (client-side, fire-and-forget)
+- Donation feature planned — blocked on Razorpay/PayPal account setup; see docs/donation-feature-plan.md
+- Audio TTS planned — see docs/audio-tts-feature-plan.md

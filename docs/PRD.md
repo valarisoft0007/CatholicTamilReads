@@ -30,6 +30,8 @@ A chapter-by-chapter book reading platform designed for Catholic Tamil literatur
 | Admin Auth | JWT (jose library) | 6.2.2 |
 | Image CDN | Cloudinary | 2.9.0 |
 | Rich Text Editor | Tiptap | 3.20.5 |
+| Drag-and-Drop | @dnd-kit/core + @dnd-kit/sortable | 6.x |
+| Analytics | Firebase Analytics (Google Analytics 4) | via Firebase 12.11.0 |
 | Theme Management | next-themes | 0.4.6 |
 | Data Fetching | SWR | 2.4.1 |
 | Dev Bundler | Turbopack | built-in |
@@ -206,6 +208,10 @@ users/                              # Implicit via Firebase Auth
 | chapterCount | number | Auto-managed on chapter create/delete |
 | order | number | Display sort order |
 | isFree | boolean (optional) | If true, all chapters readable without login |
+| viewCount | number (optional) | Total views; created on first increment via server-side API |
+| ebookPdfUrl | string (optional) | Cloudinary URL for published PDF |
+| ebookEpubUrl | string (optional) | Cloudinary URL for published EPUB |
+| ebookFilename | string (optional) | English filename for reader download |
 | createdAt | Timestamp | Server timestamp |
 | updatedAt | Timestamp | Server timestamp |
 
@@ -219,6 +225,7 @@ users/                              # Implicit via Firebase Auth
 | order | number | Chapter sequence number |
 | status | "draft" \| "published" | Publication status |
 | isFree | boolean (optional) | If true, this chapter is readable without login |
+| viewCount | number (optional) | Total views; created on first increment via server-side API |
 | createdAt | Timestamp | Server timestamp |
 | updatedAt | Timestamp | Server timestamp |
 
@@ -344,6 +351,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 |-------|-------|--------|
 | `POST /api/reading-progress` | 30 requests | 1 minute |
 | `GET /api/books/[bookId]/download` | 10 requests | 1 hour |
+| `POST /api/analytics/view` | 5 requests per book | 1 hour (keyed by IP + bookId) |
 
 ---
 
@@ -366,6 +374,8 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 | POST | `/api/admin/news` | Admin JWT cookie | Create a news item |
 | PATCH | `/api/admin/news/[newsId]` | Admin JWT cookie | Update a news item |
 | DELETE | `/api/admin/news/[newsId]` | Admin JWT cookie | Delete a news item |
+| PATCH | `/api/admin/books/[bookId]/chapters/reorder` | Admin JWT cookie | Batch reorder chapters (Firestore WriteBatch) |
+| POST | `/api/analytics/view` | None (public) | Increment book/chapter viewCount; rate-limited 5/hr per IP per book |
 
 ---
 
@@ -444,8 +454,10 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 ### 7.2 Admin Features
 
 #### Admin Dashboard
-- Statistics cards: Published Books count, Drafts count, Total Chapters count
-- Quick action buttons: "New Book", "Manage Books"
+- Statistics cards: Published Books count, Drafts count, Total Chapters count, Total Views
+- Top 5 Books by view count table (title, status, views)
+- Firebase Analytics Console link (deep link to project analytics)
+- Quick action buttons: "New Book", "Manage Books", "Firebase Analytics ↗"
 
 #### News Management
 - Add news items: title + content text
@@ -463,8 +475,10 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 
 #### Chapter Management
 - List chapters for a book, ordered by chapter number
+- **Drag-and-drop reorder**: 6-dot grip handle on each row; optimistic UI update via `arrayMove`; persisted via batch Firestore write (`PATCH /api/admin/books/[bookId]/chapters/reorder`)
 - Create chapter: title, content (rich text), order, status
 - Edit chapter: all fields editable
+- **Content preview**: Preview button in chapter editor opens a modal showing the current (unsaved) content rendered with the same prose styles as the reader page
 - Delete chapter (auto-decrements book's chapter count)
 - **Free chapter toggle**: Inline toggle switch per chapter directly on the chapters list — mark individual chapters as free samples without opening the edit form
 
@@ -525,6 +539,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=   # From Firebase Console → Project Settings → Your apps → measurementId
 
 # Firebase Admin SDK (server-only)
 FIREBASE_ADMIN_PROJECT_ID=
@@ -653,14 +668,44 @@ Add optional `audioUrl?: string` field to the `Chapter` document.
 
 ---
 
-## 13. Known Limitations & Future Considerations
+## 13. Analytics
+
+### Overview
+
+Two-layer analytics: server-side Firestore counters for admin visibility, and Firebase Analytics for time-series data in the Firebase Console.
+
+### Firestore View Counters (Option A)
+
+- `viewCount` field on `Book` and `Chapter` documents — optional, created on first increment
+- Incremented via `POST /api/analytics/view` (Admin SDK, server-side)
+- Rate limited: 5 views per hour per IP per book (in-memory, keyed `${ip}:${bookId}`)
+- No auth required — unauthenticated readers are tracked
+- Both book and chapter views counted when a chapter page is opened
+- Admin dashboard shows: Total Views stat card, Top 5 Books by viewCount
+
+### Firebase Analytics (Option B)
+
+- `firebase/analytics` initialized client-side via `getClientAnalytics()` (lazy, browser-only, guarded with `isSupported()`)
+- Events fired: `book_view` (on book detail page load), `chapter_view` (on chapter reader page load)
+- Fire-and-forget — never blocks render; `.catch(() => {})` on all calls
+- Data visible in Firebase Console → Analytics (up to 24h processing delay; Realtime view is near-instant)
+- Requires `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` env var; silently skipped if not set
+
+### Key Decisions
+
+- Per-IP rate limiting chosen over per-user — unauthenticated readers still tracked; no auth token overhead
+- No session-storage deduplication — IP rate limit is sufficient at current scale
+- viewCount not shown on public pages — admin-only visibility
+
+---
+
+## 14. Known Limitations & Future Considerations
 
 1. **No test coverage** — No unit, integration, or e2e test framework configured
 2. **Single admin password** — All admins share one password; no per-user admin accounts
-3. **In-memory rate limiting** — Rate limiters reset on server cold start (serverless); no persistent store (Redis) used
+3. **In-memory rate limiting** — Rate limiters reset on server cold start (serverless); no persistent store (Redis) used; analytics view counts may be slightly over-counted across instances
 4. **No search** — No book or content search functionality
 5. **No pagination** — All published books loaded at once
 6. **No error boundaries** — No React error boundary components
 7. **Empty UI component library** — `src/components/ui/` exists but is unused
 8. **No offline support** — No service worker or PWA configuration
-9. **No analytics** — No usage tracking or metrics collection

@@ -9,7 +9,7 @@ export default function SignInPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <span className="text-3xl text-gold sm:text-4xl">&#10013;</span>
-          <h1 className="mt-4 text-xl font-bold sm:text-2xl">Welcome Back</h1>
+          <h1 className="mt-4 text-xl font-bold sm:text-2xl">Peace be with you</h1>
           <p className="mt-1 text-sm text-muted">
             Sign in to track your reading progress and bookmarks.
           </p>

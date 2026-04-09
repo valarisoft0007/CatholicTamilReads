@@ -39,7 +39,7 @@
 ## Public Pages
 - [x] Home page with hero section
 - [x] Book browsing grid (published books)
-- [x] Book detail page with cover, description, chapter list
+- [x] Book detail page with cover, description, chapter list (responsive: stacked on mobile, side-by-side on desktop)
 - [x] Chapter reader page with HTML content rendering
 - [x] User sign-in page
 - [x] User sign-up page
@@ -98,6 +98,7 @@
 - [x] Cathedral Dark (dark) theme
 - [x] System theme preference detection
 - [x] Responsive mobile navigation (hamburger menu)
+- [x] Book detail page responsive layout — cover stacked above text on mobile, side-by-side on sm+
 - [x] Loading skeleton animations
 - [x] Hero section with animated floating icons
 - [x] Google Fonts (Inter + Lora)
@@ -113,7 +114,7 @@
 - [x] Reading progress operations (src/lib/firestore/reading-progress.ts)
 - [x] News read operations (src/lib/firestore/news.ts)
 - [x] Image upload via API route (src/lib/firebase/storage.ts)
-- [ ] Data validation / sanitization layer
+- [ ] Data validation / sanitization layer — Zod schemas planned; see docs/validation-layer-plan.md
 - [ ] Firestore security rules
 - [ ] Rate limiting on API routes
 - [ ] Caching strategy (SWR configured but underutilized)
@@ -165,7 +166,7 @@
 | eBook Export | 20 | 0 |
 | **Total** | **101** | **38** |
 
-**Overall Progress: ~70% complete**
+**Overall Progress: ~73% complete**
 
 ---
 
@@ -197,6 +198,14 @@
 3. Input validation middleware
 4. CSRF protection (low priority — SameSite=lax already blocks most attacks)
 5. Donation feature (blocked — awaiting Razorpay + PayPal account setup)
+
+## Analytics (completed 2026-04-09)
+- [x] `viewCount` field on Book + Chapter types
+- [x] `POST /api/analytics/view` — rate-limited (5/hr per IP per book), Admin SDK increment
+- [x] Book view tracking on book detail page (fire-and-forget)
+- [x] Chapter view tracking on chapter reader page (fire-and-forget)
+- [x] Firebase Analytics SDK initialized (`getClientAnalytics()`) — `book_view` + `chapter_view` events
+- [x] Admin dashboard: Total Views stat card, Top 5 Books table, Firebase Console link
 
 ## Donation Feature (Planned — Blocked on Gateway Accounts)
 - [ ] Razorpay account KYC + API keys (India payments)
