@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RichTextEditor } from "./RichTextEditor";
+import { ChapterContent } from "@/components/reader/ChapterContent";
 import type { Chapter } from "@/types";
 
 interface ChapterFormProps {
@@ -13,6 +14,7 @@ interface ChapterFormProps {
 export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [chapterId] = useState(chapter?.id || `new-${Date.now()}`);
   const [title, setTitle] = useState(chapter?.title || "");
   const [content, setContent] = useState(chapter?.content || "");
@@ -52,6 +54,7 @@ export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex gap-4">
         <div className="flex-1">
@@ -118,7 +121,49 @@ export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
         >
           Cancel
         </button>
+        <button
+          type="button"
+          onClick={() => setShowPreview(true)}
+          className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-card transition-colors"
+        >
+          Preview
+        </button>
       </div>
     </form>
+
+    {showPreview && (
+      <div
+        className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4"
+        onClick={() => setShowPreview(false)}
+      >
+        <div
+          className="relative mb-8 mt-8 w-full max-w-3xl rounded-lg bg-background shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <div>
+              <h2 className="text-lg font-semibold">{title || "Untitled Chapter"}</h2>
+              <p className="text-xs text-muted-foreground">Preview — not saved</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowPreview(false)}
+              className="text-xl leading-none text-muted-foreground hover:text-foreground"
+              aria-label="Close preview"
+            >
+              &times;
+            </button>
+          </div>
+          <div className="px-6 py-8">
+            {content ? (
+              <ChapterContent html={content} />
+            ) : (
+              <p className="py-12 text-center text-muted-foreground">No content yet.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
