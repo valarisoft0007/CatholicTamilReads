@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { parseBody } from "@/lib/validation";
+import { ChapterCreateSchema } from "@/lib/validation/book";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.ADMIN_JWT_SECRET || "default-secret-change-me"
@@ -27,14 +29,16 @@ export async function POST(
   }
 
   const { bookId } = await params;
-  const data = await request.json();
+  const body = await request.json();
+  const parsed = parseBody(ChapterCreateSchema, body);
+  if (!parsed.success) return parsed.response;
 
   const docRef = await adminDb
     .collection("books")
     .doc(bookId)
     .collection("chapters")
     .add({
-      ...data,
+      ...parsed.data,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });

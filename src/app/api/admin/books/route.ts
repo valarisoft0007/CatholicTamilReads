@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { parseBody } from "@/lib/validation";
+import { BookCreateSchema } from "@/lib/validation/book";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.ADMIN_JWT_SECRET || "default-secret-change-me"
@@ -23,9 +25,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const data = await request.json();
+  const body = await request.json();
+  const parsed = parseBody(BookCreateSchema, body);
+  if (!parsed.success) return parsed.response;
+
   const docRef = await adminDb.collection("books").add({
-    ...data,
+    ...parsed.data,
     chapterCount: 0,
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),

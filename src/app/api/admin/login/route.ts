@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SignJWT } from "jose";
+import { parseBody } from "@/lib/validation";
+import { AdminLoginSchema } from "@/lib/validation/auth";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 const JWT_SECRET = new TextEncoder().encode(
@@ -54,9 +56,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { password } = await request.json();
+  const body = await request.json();
+  const parsed = parseBody(AdminLoginSchema, body);
+  if (!parsed.success) return parsed.response;
 
-  if (password !== ADMIN_PASSWORD) {
+  if (parsed.data.password !== ADMIN_PASSWORD) {
     recordFailedAttempt(ip);
     console.error(`[ADMIN AUTH] Failed login attempt - IP: ${ip}, time: ${timestamp}`);
     return NextResponse.json({ error: "Invalid password" }, { status: 401 });

@@ -10,6 +10,7 @@ A chapter-by-chapter Catholic book reading platform built with Next.js, Firebase
 - **Image CDN**: Cloudinary
 - **Styling**: Tailwind CSS 4 + next-themes (dark/light mode)
 - **Editor**: Tiptap (WYSIWYG rich text for admin)
+- **Validation**: Zod (API input validation on all routes)
 
 ## Getting Started
 
@@ -98,6 +99,7 @@ src/
 - User profile with reading history, bookmarks, and favorites
 - Dark/Light theme (Vatican Ivory / Cathedral Dark)
 - Responsive design with mobile navigation
+- Accessible — skip to main content link, ARIA labels, decorative elements hidden from screen readers, WCAG AA progress bar
 
 ### Admin Panel (`/admin`)
 - Dashboard with published/draft/chapter stats, **total views**, and **top books by views**
@@ -113,6 +115,7 @@ src/
 - Session: 8-hour JWT, 30-minute idle auto-logout
 - Brute-force protection: 5 failed attempts per IP per 15 minutes → locked out
 - All book/chapter writes go through Admin SDK API routes (`/api/admin/books/*`) — client SDK is read-only
+- **Input validation**: all API routes validated with Zod schemas (`src/lib/validation/`); invalid requests return `400` with field-level error details
 - Chapter HTML content sanitized at render time via `isomorphic-dompurify` (XSS prevention)
 - CSP + `X-Content-Type-Options` + `X-Frame-Options` + `Referrer-Policy` headers on all responses (`next.config.ts`)
 - Reader API rate limiting: `/api/reading-progress` (30 req/min), `/api/books/[bookId]/download` (10 req/hr)

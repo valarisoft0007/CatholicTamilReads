@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { createRateLimiter } from "@/lib/rate-limit";
+import { parseBody } from "@/lib/validation";
+import { ReadingProgressSchema } from "@/lib/validation/reader";
 
 const checkLimit = createRateLimiter(30, 60_000); // 30 requests per minute per IP
 
@@ -21,8 +23,11 @@ export async function POST(request: NextRequest) {
     const decoded = await adminAuth.verifyIdToken(token);
     const uid = decoded.uid;
 
-    const { bookId, lastChapterId, lastChapterOrder, scrollPosition } =
-      await request.json();
+    const body = await request.json();
+    const parsed = parseBody(ReadingProgressSchema, body);
+    if (!parsed.success) return parsed.response;
+
+    const { bookId, lastChapterId, lastChapterOrder, scrollPosition } = parsed.data;
 
     await adminDb
       .doc(`users/${uid}/readingProgress/${bookId}`)

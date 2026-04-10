@@ -56,7 +56,7 @@ export function TableOfContents({
               }`}
             >
               {isRead || isCompleted ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               ) : (
@@ -82,7 +82,7 @@ export function TableOfContents({
                 <p className="mt-0.5 text-xs text-success">Completed</p>
               )}
             </div>
-            <span className="text-muted">&rarr;</span>
+            <span aria-hidden="true" className="text-muted">&rarr;</span>
           </Link>
         );
       })}
