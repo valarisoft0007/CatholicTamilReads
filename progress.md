@@ -103,8 +103,8 @@
 - [x] Hero section with animated floating icons
 - [x] Google Fonts (Inter + Lora)
 - [~] Accessibility audit (WCAG compliance) — quick wins done: skip link, aria-hidden on decorative elements, progressbar role, aria-label on nav
-- [ ] Keyboard navigation improvements
-- [ ] Screen reader optimizations
+- [~] Keyboard navigation improvements — focus-visible ring (globals.css) + skip link done; missing: focus trap in modals, Escape to close menus, arrow key shortcuts in reader
+- [~] Screen reader optimizations — sr-only skip link, aria-hidden on decorative elements, aria-label on all icon buttons, progressbar role done; missing: aria-live for dynamic updates, aria-expanded on mobile menu, aria-current on nav links
 
 ## Data Layer
 - [x] Books CRUD operations (src/lib/firestore/books.ts)
@@ -115,9 +115,9 @@
 - [x] News read operations (src/lib/firestore/news.ts)
 - [x] Image upload via API route (src/lib/firebase/storage.ts)
 - [x] Data validation / sanitization layer — Zod schemas on all API routes (src/lib/validation/); see docs/validation-layer-plan.md
-- [ ] Firestore security rules
-- [ ] Rate limiting on API routes
-- [ ] Caching strategy (SWR configured but underutilized)
+- [x] Firestore security rules — books/chapters read-only from client, user data owner-only (firestore.rules)
+- [x] Rate limiting on API routes — public routes covered (reading-progress: 30/min, download: 10/hr, analytics/view: 5/hr per book); admin routes JWT-protected so not needed
+- [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
 - [ ] Unit tests
@@ -142,9 +142,9 @@
 - [x] Admin session absolute timeout (8h, down from 24h)
 - [x] Server-side admin logout (POST /api/admin/logout clears httpOnly cookie)
 - [x] HTML content sanitization (XSS prevention — isomorphic-dompurify on ChapterContent render)
-- [ ] CSRF protection
+- [x] CSRF protection — admin_session cookie uses SameSite=lax, blocks cross-origin POST/PUT/DELETE/PATCH; full CSRF tokens not needed for single-domain app
 - [x] Rate limiting on reader API routes (30 req/min on reading-progress, 10 req/hr on download — shared src/lib/rate-limit.ts)
-- [ ] Input validation middleware
+- [x] Input validation middleware — Zod parseBody() helper called per route (src/lib/validation/); idiomatic for Next.js App Router, no centralized middleware needed
 - [x] Content Security Policy headers (next.config.ts headers() — CSP + X-Content-Type-Options + X-Frame-Options + Referrer-Policy)
 - [x] Firestore security rules (firestore.rules — books/chapters read-only from client, user data owner-only)
 
@@ -160,11 +160,11 @@
 | Reader Features | 11 | 5 |
 | Admin Panel | 18 | 4 |
 | Theming & UI | 10 | 3 |
-| Data Layer | 8 | 3 |
+| Data Layer | 9 | 2 |
 | DevOps & Quality | 0 | 10 |
-| Security | 13 | 2 |
+| Security | 15 | 0 |
 | eBook Export | 20 | 0 |
-| **Total** | **104** | **37** |
+| **Total** | **107** | **34** |
 
 **Overall Progress: ~74% complete**
 
@@ -195,9 +195,7 @@
 ## Next Priority Items
 1. Book search / filtering
 2. Test framework setup
-3. Input validation middleware
-4. CSRF protection (low priority — SameSite=lax already blocks most attacks)
-5. Donation feature (blocked — awaiting Razorpay + PayPal account setup)
+3. Donation feature (blocked — awaiting Razorpay + PayPal account setup)
 
 ## Analytics (completed 2026-04-09)
 - [x] `viewCount` field on Book + Chapter types
