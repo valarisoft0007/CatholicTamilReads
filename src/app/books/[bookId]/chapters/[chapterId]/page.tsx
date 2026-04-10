@@ -130,7 +130,7 @@ export default function ChapterReaderPage() {
             href={`/books/${bookId}`}
             className="mb-2 inline-block text-sm text-muted hover:text-gold transition-colors"
           >
-            &larr; {book.title}
+            <span aria-hidden="true">&larr;</span> {book.title}
           </Link>
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -157,7 +157,7 @@ export default function ChapterReaderPage() {
         {/* Ornamental divider */}
         <div className="mb-8 flex items-center gap-4">
           <div className="h-px flex-1 bg-border" />
-          <span className="text-gold/40 text-sm">&#10013;</span>
+          <span aria-hidden="true" className="text-gold/40 text-sm">&#10013;</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 

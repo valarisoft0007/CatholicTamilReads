@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { parseBody } from "@/lib/validation";
+import { NewsCreateSchema } from "@/lib/validation/news";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.ADMIN_JWT_SECRET || "default-secret-change-me"
@@ -37,18 +39,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { title, content } = await request.json();
-
-  if (!title?.trim() || !content?.trim()) {
-    return NextResponse.json(
-      { error: "Title and content are required" },
-      { status: 400 }
-    );
-  }
+  const body = await request.json();
+  const parsed = parseBody(NewsCreateSchema, body);
+  if (!parsed.success) return parsed.response;
 
   const docRef = await adminDb.collection("news").add({
-    title: title.trim(),
-    content: content.trim(),
+    title: parsed.data.title.trim(),
+    content: parsed.data.content.trim(),
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   });

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { createRateLimiter } from "@/lib/rate-limit";
+import { parseBody } from "@/lib/validation";
+import { AnalyticsViewSchema } from "@/lib/validation/reader";
 
 // 5 views per hour per IP per book
 const limiter = createRateLimiter(5, 60 * 60 * 1000);
@@ -11,11 +13,11 @@ export async function POST(request: NextRequest) {
     request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     "unknown";
 
-  const { type, bookId, chapterId } = await request.json();
+  const body = await request.json();
+  const parsed = parseBody(AnalyticsViewSchema, body);
+  if (!parsed.success) return parsed.response;
 
-  if (!type || !bookId || (type === "chapter" && !chapterId)) {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-  }
+  const { type, bookId, chapterId } = parsed.data;
 
   // Rate limit per IP per book
   const allowed = limiter(`${ip}:${bookId}`);

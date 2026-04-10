@@ -33,6 +33,7 @@ A chapter-by-chapter book reading platform designed for Catholic Tamil literatur
 | Drag-and-Drop | @dnd-kit/core + @dnd-kit/sortable | 6.x |
 | Analytics | Firebase Analytics (Google Analytics 4) | via Firebase 12.11.0 |
 | Theme Management | next-themes | 0.4.6 |
+| Input Validation | Zod | 4.3.6 |
 | Data Fetching | SWR | 2.4.1 |
 | Dev Bundler | Turbopack | built-in |
 | Linting | ESLint | 9.39.4 |
@@ -84,6 +85,7 @@ A chapter-by-chapter book reading platform designed for Catholic Tamil literatur
 6. **Client-side Firestore reads** — Most data reads happen directly from client to Firestore without API intermediary.
 7. **Server-side admin operations** — All admin writes (books, chapters CRUD) go through API routes using the Admin SDK, which bypasses Firestore security rules. Client SDK is used for reads only.
 8. **Firestore security rules** — Client SDK access is locked down: books/chapters are read-only from the client; user subcollections (progress, bookmarks, favorites) are owner-only.
+9. **Zod input validation** — All API routes validate request bodies via Zod schemas in `src/lib/validation/`. The shared `parseBody()` helper returns a `400` with field-level error details on bad input before any Firestore logic runs.
 
 ### 3.3 Directory Structure
 
@@ -163,6 +165,13 @@ src/
 │   │   ├── client.ts                 # Firebase Client SDK (singleton)
 │   │   └── storage.ts                # Image upload utilities
 │   ├── sanitize.ts                   # HTML sanitization via isomorphic-dompurify (XSS prevention)
+│   ├── rate-limit.ts                 # Shared in-memory rate limiter factory
+│   ├── validation/
+│   │   ├── index.ts                  # parseBody() helper — validates and returns 400 on bad input
+│   │   ├── book.ts                   # BookCreateSchema, BookUpdateSchema, ChapterCreateSchema, ChapterUpdateSchema, ReorderSchema
+│   │   ├── news.ts                   # NewsCreateSchema, NewsUpdateSchema
+│   │   ├── reader.ts                 # ReadingProgressSchema, AnalyticsViewSchema
+│   │   └── auth.ts                   # AdminLoginSchema
 │   └── firestore/
 │       ├── books.ts                  # Book CRUD operations (reads only — writes via API routes)
 │       ├── chapters.ts               # Chapter CRUD operations (reads only — writes via API routes)

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { parseBody } from "@/lib/validation";
+import { NewsUpdateSchema } from "@/lib/validation/news";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.ADMIN_JWT_SECRET || "default-secret-change-me"
@@ -27,14 +29,16 @@ export async function PATCH(
   }
 
   const { newsId } = await params;
-  const { title, content } = await request.json();
+  const body = await request.json();
+  const parsed = parseBody(NewsUpdateSchema, body);
+  if (!parsed.success) return parsed.response;
 
   await adminDb
     .collection("news")
     .doc(newsId)
     .update({
-      ...(title !== undefined && { title: title.trim() }),
-      ...(content !== undefined && { content: content.trim() }),
+      ...(parsed.data.title !== undefined && { title: parsed.data.title.trim() }),
+      ...(parsed.data.content !== undefined && { content: parsed.data.content.trim() }),
       updatedAt: FieldValue.serverTimestamp(),
     });
 

@@ -112,7 +112,7 @@ export default function BookDetailPage() {
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-gold/15 to-gold/5">
-              <span className="text-3xl text-gold/40 sm:text-5xl">&#10013;</span>
+              <span aria-hidden="true" className="text-3xl text-gold/40 sm:text-5xl">&#10013;</span>
             </div>
           )}
         </div>
@@ -133,7 +133,7 @@ export default function BookDetailPage() {
                 href={`/books/${bookId}/chapters/${progress.lastChapterId}`}
                 className="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-gold-dark hover:shadow-lg"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                   <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                 </svg>
@@ -146,7 +146,7 @@ export default function BookDetailPage() {
                 href={`/books/${bookId}/chapters/${chapters[0].id}`}
                 className="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-gold-dark hover:shadow-lg"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                   <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                 </svg>
@@ -173,7 +173,14 @@ export default function BookDetailPage() {
             <span className="font-medium">Your Progress</span>
             <span className="text-muted">{progressPercent}% complete</span>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-border">
+          <div
+            className="mt-2 h-2 w-full overflow-hidden rounded-full bg-border"
+            role="progressbar"
+            aria-valuenow={progressPercent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Reading progress: ${progressPercent}% complete`}
+          >
             <div
               className="h-full rounded-full bg-gradient-to-r from-gold-dark to-gold transition-all"
               style={{ width: `${progressPercent}%` }}

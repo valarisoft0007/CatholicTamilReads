@@ -4,12 +4,12 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       {/* Decorative gold line */}
-      <div className="h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+      <div aria-hidden="true" className="h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
 
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           {/* Quick links */}
-          <nav className="flex items-center gap-6">
+          <nav aria-label="Footer navigation" className="flex items-center gap-6">
             <Link
               href="/"
               className="text-sm text-muted hover:text-foreground transition-colors"
@@ -31,7 +31,7 @@ export function Footer() {
         </div>
 
         <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted">
-          <span className="text-gold/40">&#10013;</span>
+          <span aria-hidden="true" className="text-gold/40">&#10013;</span>
           <p>&copy; {new Date().getFullYear()} Catholic Tamil Reads</p>
         </div>
       </div>

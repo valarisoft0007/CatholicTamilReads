@@ -21,6 +21,7 @@
 - jose for JWT admin auth
 - SWR for data fetching
 - next-themes for dark/light mode
+- Zod for API input validation (src/lib/validation/)
 
 ## Architecture
 - Monolithic Next.js app — no separate backend
@@ -78,3 +79,5 @@
 - Analytics: Firestore viewCount (server-side) + Firebase Analytics events (client-side, fire-and-forget)
 - Donation feature planned — blocked on Razorpay/PayPal account setup; see docs/donation-feature-plan.md
 - Audio TTS planned — see docs/audio-tts-feature-plan.md
+- Input validation: all API routes validated with Zod; schemas in src/lib/validation/, shared parseBody() helper returns 400 on bad input
+- Accessibility: skip-to-main link in layout.tsx, aria-hidden on all decorative elements, aria-label on navs, role="progressbar" on reading progress bar

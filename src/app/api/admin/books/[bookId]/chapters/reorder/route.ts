@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { adminDb } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { parseBody } from "@/lib/validation";
+import { ReorderSchema } from "@/lib/validation/book";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.ADMIN_JWT_SECRET || "default-secret-change-me"
@@ -27,16 +29,14 @@ export async function PATCH(
   }
 
   const { bookId } = await params;
-  const { orderedIds } = await request.json();
-
-  if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
-    return NextResponse.json({ error: "orderedIds must be a non-empty array" }, { status: 400 });
-  }
+  const body = await request.json();
+  const parsed = parseBody(ReorderSchema, body);
+  if (!parsed.success) return parsed.response;
 
   const chaptersRef = adminDb.collection("books").doc(bookId).collection("chapters");
   const batch = adminDb.batch();
 
-  orderedIds.forEach((chapterId: string, index: number) => {
+  parsed.data.orderedIds.forEach((chapterId, index) => {
     const chapterRef = chaptersRef.doc(chapterId);
     batch.update(chapterRef, {
       order: index + 1,

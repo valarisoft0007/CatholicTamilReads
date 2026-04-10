@@ -102,7 +102,7 @@
 - [x] Loading skeleton animations
 - [x] Hero section with animated floating icons
 - [x] Google Fonts (Inter + Lora)
-- [ ] Accessibility audit (WCAG compliance)
+- [~] Accessibility audit (WCAG compliance) — quick wins done: skip link, aria-hidden on decorative elements, progressbar role, aria-label on nav
 - [ ] Keyboard navigation improvements
 - [ ] Screen reader optimizations
 
@@ -114,7 +114,7 @@
 - [x] Reading progress operations (src/lib/firestore/reading-progress.ts)
 - [x] News read operations (src/lib/firestore/news.ts)
 - [x] Image upload via API route (src/lib/firebase/storage.ts)
-- [ ] Data validation / sanitization layer — Zod schemas planned; see docs/validation-layer-plan.md
+- [x] Data validation / sanitization layer — Zod schemas on all API routes (src/lib/validation/); see docs/validation-layer-plan.md
 - [ ] Firestore security rules
 - [ ] Rate limiting on API routes
 - [ ] Caching strategy (SWR configured but underutilized)
@@ -159,14 +159,14 @@
 | Public Pages | 8 | 3 |
 | Reader Features | 11 | 5 |
 | Admin Panel | 18 | 4 |
-| Theming & UI | 8 | 3 |
-| Data Layer | 7 | 4 |
+| Theming & UI | 10 | 3 |
+| Data Layer | 8 | 3 |
 | DevOps & Quality | 0 | 10 |
 | Security | 13 | 2 |
 | eBook Export | 20 | 0 |
-| **Total** | **101** | **38** |
+| **Total** | **104** | **37** |
 
-**Overall Progress: ~73% complete**
+**Overall Progress: ~74% complete**
 
 ---
 
