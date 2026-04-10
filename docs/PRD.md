@@ -9,7 +9,7 @@
 **Prototype**: Trail 5
 **Type**: Full-stack online book reading platform for Catholic Tamil literature
 **Architecture**: Monolithic Next.js application with Firebase backend
-**Status**: ~73% complete (see [progress.md](../progress.md) for details)
+**Status**: ~76% complete (see [progress.md](../progress.md) for details)
 
 ### Purpose
 
@@ -124,10 +124,19 @@ src/
 │       │   ├── verify/route.ts       # GET: Verify admin session
 │       │   ├── logout/route.ts       # POST: Clear admin session cookie
 │       │   ├── upload/route.ts       # POST: Image upload to Cloudinary
-│       │   └── news/
-│       │       ├── route.ts          # GET: List news | POST: Create news item
-│       │       └── [newsId]/route.ts # PATCH: Update | DELETE: Remove news item
-│       └── reading-progress/route.ts # POST: Save reading progress
+│       │   ├── news/
+│       │   │   ├── route.ts          # GET: List news | POST: Create news item
+│       │   │   └── [newsId]/route.ts # PATCH: Update | DELETE: Remove news item
+│       │   └── books/
+│       │       └── [bookId]/
+│       │           └── export/
+│       │               ├── route.ts           # GET: Generate & download eBook (?format=pdf|epub|docx)
+│       │               ├── publish/route.ts   # POST: Upload to Cloudinary, save URL
+│       │               └── unpublish/route.ts # POST: Remove published eBook URL
+│       ├── reading-progress/route.ts # POST: Save reading progress
+│       └── books/
+│           └── [bookId]/
+│               └── download/route.ts # GET: Proxy download for readers (streams with Content-Disposition)
 ├── components/
 │   ├── layout/
 │   │   ├── Header.tsx                # Sticky nav with mobile menu
@@ -139,7 +148,8 @@ src/
 │   ├── books/
 │   │   ├── BookGrid.tsx              # Grid display of published books
 │   │   ├── BookCard.tsx              # Individual book card component
-│   │   └── TableOfContents.tsx       # Chapter list with read status
+│   │   ├── TableOfContents.tsx       # Chapter list with read status
+│   │   └── DownloadButtons.tsx       # PDF/EPUB download buttons for readers (auth-gated)
 │   ├── reader/
 │   │   ├── ChapterContent.tsx        # HTML content renderer
 │   │   ├── ReadingProgressBar.tsx    # Scroll progress indicator
@@ -151,7 +161,8 @@ src/
 │   │   ├── BookForm.tsx              # Book create/edit form
 │   │   ├── ChapterForm.tsx           # Chapter create/edit form
 │   │   ├── RichTextEditor.tsx        # Tiptap WYSIWYG editor
-│   │   └── ImageUpload.tsx           # Image upload with preview
+│   │   ├── ImageUpload.tsx           # Image upload with preview
+│   │   └── ExportButtons.tsx         # Generate/upload/publish PDF, EPUB, DOCX (admin-only)
 │   ├── ui/                           # Generic UI components (placeholder)
 │   ├── HeroSection.tsx               # Landing page hero
 │   ├── NewsPanel.tsx                 # News cards — responsive grid between hero and books
@@ -166,6 +177,11 @@ src/
 │   │   └── storage.ts                # Image upload utilities
 │   ├── sanitize.ts                   # HTML sanitization via isomorphic-dompurify (XSS prevention)
 │   ├── rate-limit.ts                 # Shared in-memory rate limiter factory
+│   ├── export/
+│   │   ├── types.ts                  # ExportableBook, ExportableChapter, ExportFormat types
+│   │   ├── html-processor.ts         # buildPdfHtml(), sanitizeForEpub(), optimizeImageUrls()
+│   │   ├── pdf-generator.ts          # generatePdf(book, chapters) → Buffer (puppeteer)
+│   │   └── epub-generator.ts         # generateEpub(book, chapters) → Buffer (epub-gen-memory)
 │   ├── validation/
 │   │   ├── index.ts                  # parseBody() helper — validates and returns 400 on bad input
 │   │   ├── book.ts                   # BookCreateSchema, BookUpdateSchema, ChapterCreateSchema, ChapterUpdateSchema, ReorderSchema
@@ -385,6 +401,10 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 | DELETE | `/api/admin/news/[newsId]` | Admin JWT cookie | Delete a news item |
 | PATCH | `/api/admin/books/[bookId]/chapters/reorder` | Admin JWT cookie | Batch reorder chapters (Firestore WriteBatch) |
 | POST | `/api/analytics/view` | None (public) | Increment book/chapter viewCount; rate-limited 5/hr per IP per book |
+| GET | `/api/admin/books/[bookId]/export?format=pdf\|epub\|docx` | Admin JWT cookie | Generate and download eBook (PDF/EPUB/DOCX) |
+| POST | `/api/admin/books/[bookId]/export/publish` | Admin JWT cookie | Upload PDF or EPUB to Cloudinary, save URL to Book doc |
+| POST | `/api/admin/books/[bookId]/export/unpublish` | Admin JWT cookie | Remove published eBook URL from Book doc |
+| GET | `/api/books/[bookId]/download` | Firebase Bearer token | Proxy download for reader (streams file with Content-Disposition) |
 
 ---
 
@@ -578,7 +598,7 @@ CLOUDINARY_API_SECRET=
 
 ---
 
-## 11. Planned Feature: eBook Export (PDF & EPUB)
+## 11. eBook Export (PDF, EPUB & DOCX) — Completed
 
 ### Overview
 

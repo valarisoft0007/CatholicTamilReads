@@ -50,6 +50,7 @@
 ## API Routes
 - POST `/api/admin/login` — admin password auth, returns JWT cookie
 - GET `/api/admin/verify` — check admin session validity
+- POST `/api/admin/logout` — clear admin session cookie server-side
 - POST `/api/admin/upload` — image upload to Cloudinary (5MB max, images only)
 - POST `/api/reading-progress` — save user reading progress (Firebase Bearer token)
 - GET `/api/admin/news` — list all news items (newest first)
@@ -61,6 +62,7 @@
 - GET `/api/admin/books/[bookId]/export?format=pdf|epub` — generate & download eBook
 - POST `/api/admin/books/[bookId]/export/publish` — publish eBook to Cloudinary
 - POST `/api/admin/books/[bookId]/export/unpublish` — remove published eBook
+- GET `/api/books/[bookId]/download` — reader proxy download (streams file with Content-Disposition, auth-gated)
 
 ## Styling
 - Tailwind CSS with CSS custom properties for theming (defined in globals.css)
