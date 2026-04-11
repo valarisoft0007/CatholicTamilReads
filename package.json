@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest",
+    "test:run": "vitest run src/__tests__/validation src/__tests__/lib src/__tests__/api",
+    "emulator:start": "firebase --config firebase.test.json emulators:start --only firestore,auth --project demo-test-project",
+    "test:integration": "vitest run --config vitest.integration.config.ts src/__tests__/firestore",
+    "test:coverage": "vitest run --coverage src/__tests__/validation src/__tests__/lib src/__tests__/api"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -37,14 +42,22 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@firebase/rules-unit-testing": "^5.0.0",
     "@tailwindcss/postcss": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/dompurify": "^3.0.5",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
+    "@types/testing-library__jest-dom": "^5.14.9",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.4",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.1",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.4"
   }
 }
