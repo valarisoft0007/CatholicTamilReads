@@ -90,7 +90,7 @@
 - [x] Chapter reordering via drag-and-drop (@dnd-kit, batch Firestore write, optimistic UI)
 - [x] Content preview before publishing (live modal in ChapterForm, reuses ChapterContent)
 - [x] Analytics dashboard (views, read time, popular books) — Firestore viewCount + Firebase Analytics events; see docs/analytics-feature-plan.md
-- [ ] User management panel
+- [x] User management panel — read-only registered user count on admin dashboard (GET /api/admin/users, stat card)
 
 ## Theming & UI
 - [x] Dark/Light theme toggle
@@ -120,8 +120,8 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [x] Unit tests — 135 tests (Vitest): Zod validation, utilities, API routes (mocked)
-- [x] Integration tests — 46 tests (Vitest + Firebase emulator): Firestore service layer
+- [x] Unit tests — 140 tests (Vitest): Zod validation, utilities, API routes (mocked)
+- [x] Integration tests — 51 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge
 - [ ] End-to-end tests (Playwright/Cypress)

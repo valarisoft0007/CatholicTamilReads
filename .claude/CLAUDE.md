@@ -67,6 +67,7 @@
 - POST `/api/admin/books/[bookId]/export/publish` — publish eBook to Cloudinary
 - POST `/api/admin/books/[bookId]/export/unpublish` — remove published eBook
 - GET `/api/books/[bookId]/download` — reader proxy download (streams file with Content-Disposition, auth-gated)
+- GET `/api/admin/users` — registered user count (JWT cookie, Firebase Admin `auth.listUsers()`)
 
 ## Styling
 - Tailwind CSS with CSS custom properties for theming (defined in globals.css)
