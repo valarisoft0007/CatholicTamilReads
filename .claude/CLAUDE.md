@@ -10,6 +10,10 @@
 - Build: `npm run build`
 - Start: `npm start`
 - Lint: `npm run lint`
+- Unit tests: `npm run test:run` (no external deps, 135 tests)
+- Integration tests: `npm run test:integration` (requires emulator running)
+- Start emulator: `npm run emulator:start` (uses firebase.test.json + firestore.test.rules)
+- Test coverage: `npm run test:coverage`
 
 ## Tech Stack
 - Next.js 16 (App Router) + React 19 + TypeScript

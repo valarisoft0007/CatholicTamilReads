@@ -59,6 +59,70 @@ npm run lint       # Run ESLint
 
 Dev server runs at `http://localhost:3000`
 
+### Testing
+
+The project uses **Vitest** for unit tests and integration tests. Integration tests run against the **Firebase Local Emulator** — no production data is touched.
+
+#### Prerequisites for integration tests
+- Java 17+ installed (required by the Firebase emulator)
+- Firebase CLI installed globally:
+  ```bash
+  npm install -g firebase-tools
+  ```
+
+#### Unit tests (no emulator needed)
+Covers: Zod validation schemas, utility functions (`sanitize`, `rate-limit`), and all API route handlers (with mocked Firebase/Cloudinary).
+
+```bash
+npm run test:run       # Run once and exit
+npm run test           # Run in watch mode
+npm run test:coverage  # Run with coverage report
+```
+
+#### Integration tests (Firebase emulator required)
+Covers: Firestore service layer — books, chapters, news, bookmarks, reading progress.
+
+**Terminal 1** — start the emulator with test rules:
+```bash
+npm run emulator:start
+```
+
+**Terminal 2** — run the integration tests:
+```bash
+npm run test:integration
+```
+
+Or run both in one command (starts emulator, runs tests, then stops emulator):
+```bash
+firebase --config firebase.test.json emulators:exec \
+  --only firestore,auth \
+  --project demo-test-project \
+  "npm run test:integration"
+```
+
+#### Test structure
+```
+src/__tests__/
+├── validation/        # Zod schema tests (auth, book, news, reader, index)
+├── lib/               # Utility tests (sanitize, rate-limit)
+├── api/               # API route handler tests (mocked Firebase/Cloudinary)
+│   ├── admin/         # login, logout, verify, news CRUD
+│   ├── analytics/     # view route
+│   └── books/         # download route
+└── firestore/         # Firestore service integration tests (requires emulator)
+    ├── books.test.ts
+    ├── chapters.test.ts
+    ├── news.test.ts
+    ├── bookmarks.test.ts
+    └── reading-progress.test.ts
+```
+
+| Command | Tests | Requires |
+|---------|-------|----------|
+| `npm run test:run` | 135 unit + API tests | Nothing |
+| `npm run test:integration` | 46 Firestore tests | Emulator running |
+| `npm run emulator:start` | — | Java 17+, firebase-tools |
+
 ## Project Structure
 
 ```
@@ -176,6 +240,7 @@ npm run build && npm start
 | File | Purpose |
 |------|---------|
 | [docs/PRD.md](docs/PRD.md) | Architecture, data models, features, full technical spec |
+| [docs/unit-tests-devops-plan.md](docs/unit-tests-devops-plan.md) | Test setup, CI/CD pipeline, test structure reference |
 | [progress.md](progress.md) | Development progress tracker with checklist |
 | [.claude/CLAUDE.md](.claude/CLAUDE.md) | Claude Code project instructions |
 | [.env.example](.env.example) | Required environment variables template |
