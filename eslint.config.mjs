@@ -1,14 +1,16 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import coreWebVitalsConfig from 'eslint-config-next/core-web-vitals';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const config = [
+  ...coreWebVitalsConfig,
+  {
+    ignores: ['coverage/**'],
+  },
+  {
+    rules: {
+      // Standard SSR hydration pattern (setMounted) and data-loading effects are intentional
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
+];
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [...compat.extends("next/core-web-vitals")];
-
-export default eslintConfig;
+export default config;
