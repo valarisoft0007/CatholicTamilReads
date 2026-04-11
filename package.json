@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint .",
+    "lint": "eslint .",
     "test": "vitest",
     "test:run": "vitest run src/__tests__/validation src/__tests__/lib src/__tests__/api",
     "emulator:start": "firebase --config firebase.test.json emulators:start --only firestore,auth --project demo-test-project",
