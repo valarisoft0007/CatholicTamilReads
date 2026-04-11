@@ -38,7 +38,6 @@ describe('Bookmarks', () => {
       chapterId: 'chap1',
       bookTitle: 'Test Book',
       chapterTitle: 'Chapter 1',
-      coverImageUrl: '',
     })
     const db = getTestDb()
     const docSnap = await getDoc(doc(db, 'users', UID, 'bookmarks', 'book1_chap1'))
@@ -51,7 +50,6 @@ describe('Bookmarks', () => {
       chapterId: 'chap1',
       bookTitle: 'Test Book',
       chapterTitle: 'Chapter 1',
-      coverImageUrl: '',
     })
     expect(await isBookmarked(UID, 'book1', 'chap1')).toBe(true)
   })
@@ -66,7 +64,6 @@ describe('Bookmarks', () => {
       chapterId: 'chap1',
       bookTitle: 'Test Book',
       chapterTitle: 'Chapter 1',
-      coverImageUrl: '',
     })
     await removeBookmark(UID, 'book1', 'chap1')
     expect(await isBookmarked(UID, 'book1', 'chap1')).toBe(false)
@@ -78,14 +75,12 @@ describe('Bookmarks', () => {
       chapterId: 'chap1',
       bookTitle: 'Book 1',
       chapterTitle: 'Chap 1',
-      coverImageUrl: '',
     })
     await addBookmark(UID, {
       bookId: 'book2',
       chapterId: 'chap2',
       bookTitle: 'Book 2',
       chapterTitle: 'Chap 2',
-      coverImageUrl: '',
     })
     const bookmarks = await getBookmarks(UID)
     expect(bookmarks.length).toBe(2)
@@ -97,14 +92,12 @@ describe('Bookmarks', () => {
       chapterId: 'chap1',
       bookTitle: 'Book 1',
       chapterTitle: 'Chap 1',
-      coverImageUrl: '',
     })
     await addBookmark(UID, {
       bookId: 'book1',
       chapterId: 'chap2',
       bookTitle: 'Book 1',
       chapterTitle: 'Chap 2',
-      coverImageUrl: '',
     })
     const bookmarks = await getBookmarks(UID)
     expect(bookmarks.length).toBe(2)
