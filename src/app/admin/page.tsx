@@ -8,12 +8,17 @@ import type { Book } from "@/types";
 
 export default function AdminDashboardPage() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [userCount, setUserCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllBooks()
-      .then(setBooks)
-      .finally(() => setLoading(false));
+    Promise.all([
+      getAllBooks(),
+      fetch("/api/admin/users").then((r) => r.json()).catch(() => ({ total: null })),
+    ]).then(([b, u]) => {
+      setBooks(b);
+      setUserCount(u.total ?? null);
+    }).finally(() => setLoading(false));
   }, []);
 
   const publishedCount = books.filter((b) => b.status === "published").length;
@@ -35,7 +40,7 @@ export default function AdminDashboardPage() {
         </div>
       ) : (
         <>
-          <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <div className="rounded-lg border border-border bg-card p-5">
               <p className="text-sm text-muted">Published Books</p>
               <p className="mt-1 text-2xl font-bold sm:text-3xl">{publishedCount}</p>
@@ -51,6 +56,12 @@ export default function AdminDashboardPage() {
             <div className="rounded-lg border border-border bg-card p-5">
               <p className="text-sm text-muted">Total Views</p>
               <p className="mt-1 text-2xl font-bold sm:text-3xl">{totalViews.toLocaleString()}</p>
+            </div>
+            <div className="rounded-lg border border-border bg-card p-5">
+              <p className="text-sm text-muted">Registered Users</p>
+              <p className="mt-1 text-2xl font-bold sm:text-3xl">
+                {userCount === null ? "—" : userCount.toLocaleString()}
+              </p>
             </div>
           </div>
 

@@ -90,7 +90,7 @@
 - [x] Chapter reordering via drag-and-drop (@dnd-kit, batch Firestore write, optimistic UI)
 - [x] Content preview before publishing (live modal in ChapterForm, reuses ChapterContent)
 - [x] Analytics dashboard (views, read time, popular books) — Firestore viewCount + Firebase Analytics events; see docs/analytics-feature-plan.md
-- [ ] User management panel
+- [x] User management panel — read-only registered user count on admin dashboard (GET /api/admin/users, stat card)
 
 ## Theming & UI
 - [x] Dark/Light theme toggle
@@ -120,10 +120,11 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [ ] Unit tests
-- [ ] Integration tests
+- [x] Unit tests — 140 tests (Vitest): Zod validation, utilities, API routes (mocked)
+- [x] Integration tests — 51 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
+- [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
+- [x] Branch protection on main — all 3 CI jobs must pass before merge
 - [ ] End-to-end tests (Playwright/Cypress)
-- [ ] CI/CD pipeline (GitHub Actions)
 - [ ] Docker configuration
 - [ ] Staging environment
 - [ ] Error monitoring (Sentry or similar)
@@ -161,12 +162,12 @@
 | Admin Panel | 18 | 4 |
 | Theming & UI | 10 | 3 |
 | Data Layer | 9 | 2 |
-| DevOps & Quality | 0 | 10 |
+| DevOps & Quality | 4 | 6 |
 | Security | 15 | 0 |
 | eBook Export | 20 | 0 |
-| **Total** | **107** | **34** |
+| **Total** | **111** | **30** |
 
-**Overall Progress: ~74% complete**
+**Overall Progress: ~76% complete**
 
 ---
 
@@ -194,8 +195,8 @@
 
 ## Next Priority Items
 1. Book search / filtering
-2. Test framework setup
-3. Donation feature (blocked — awaiting Razorpay + PayPal account setup)
+2. Donation feature (blocked — awaiting Razorpay + PayPal account setup)
+3. End-to-end tests (Playwright/Cypress)
 
 ## Analytics (completed 2026-04-09)
 - [x] `viewCount` field on Book + Chapter types

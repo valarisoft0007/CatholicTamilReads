@@ -106,21 +106,22 @@ src/__tests__/
 ├── validation/        # Zod schema tests (auth, book, news, reader, index)
 ├── lib/               # Utility tests (sanitize, rate-limit)
 ├── api/               # API route handler tests (mocked Firebase/Cloudinary)
-│   ├── admin/         # login, logout, verify, news CRUD
+│   ├── admin/         # login, logout, verify, news CRUD, users
 │   ├── analytics/     # view route
 │   └── books/         # download route
-└── firestore/         # Firestore service integration tests (requires emulator)
+└── firestore/         # Firestore + Auth emulator integration tests
     ├── books.test.ts
     ├── chapters.test.ts
     ├── news.test.ts
     ├── bookmarks.test.ts
-    └── reading-progress.test.ts
+    ├── reading-progress.test.ts
+    └── users.test.ts  # Auth emulator — listUsers, pagination, create/delete
 ```
 
 | Command | Tests | Requires |
 |---------|-------|----------|
-| `npm run test:run` | 135 unit + API tests | Nothing |
-| `npm run test:integration` | 46 Firestore tests | Emulator running |
+| `npm run test:run` | 140 unit + API tests | Nothing |
+| `npm run test:integration` | 51 Firestore + Auth emulator tests | Emulator running |
 | `npm run emulator:start` | — | Java 17+, firebase-tools |
 
 ## Project Structure
@@ -240,7 +241,8 @@ npm run build && npm start
 | File | Purpose |
 |------|---------|
 | [docs/PRD.md](docs/PRD.md) | Architecture, data models, features, full technical spec |
-| [docs/unit-tests-devops-plan.md](docs/unit-tests-devops-plan.md) | Test setup, CI/CD pipeline, test structure reference |
+| [docs/testing-guide.md](docs/testing-guide.md) | Complete testing guide — architecture, how to run, add tests, CI sequence, tools, quirks |
+| [docs/unit-tests-devops-plan.md](docs/unit-tests-devops-plan.md) | Original test setup implementation plan |
 | [progress.md](progress.md) | Development progress tracker with checklist |
 | [.claude/CLAUDE.md](.claude/CLAUDE.md) | Claude Code project instructions |
 | [.env.example](.env.example) | Required environment variables template |
