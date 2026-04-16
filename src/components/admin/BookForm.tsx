@@ -22,6 +22,7 @@ export function BookForm({ book }: BookFormProps) {
   );
   const [order, setOrder] = useState(book?.order || 0);
   const [isFree, setIsFree] = useState(book?.isFree || false);
+  const [bookType, setBookType] = useState<"book" | "songs">(book?.bookType || "book");
   const [ebookFilename, setEbookFilename] = useState(book?.ebookFilename || "");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +30,7 @@ export function BookForm({ book }: BookFormProps) {
     setSaving(true);
 
     try {
-      const data = { title, description, authorName, coverImageUrl, status, order, isFree, ebookFilename };
+      const data = { title, description, authorName, coverImageUrl, status, order, isFree, bookType, ebookFilename };
 
       if (book) {
         await fetch(`/api/admin/books/${book.id}`, {
@@ -127,6 +128,18 @@ export function BookForm({ book }: BookFormProps) {
           >
             <option value="draft">Draft</option>
             <option value="published">Published</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Book Type</label>
+          <select
+            value={bookType}
+            onChange={(e) => setBookType(e.target.value as "book" | "songs")}
+            className="rounded-md border border-border px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+          >
+            <option value="book">Book</option>
+            <option value="songs">Songs</option>
           </select>
         </div>
 

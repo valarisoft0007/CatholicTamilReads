@@ -7,12 +7,14 @@ interface ChapterNavigationProps {
   bookId: string;
   prevChapter?: Chapter | null;
   nextChapter?: Chapter | null;
+  bookType?: "book" | "songs";
 }
 
 export function ChapterNavigation({
   bookId,
   prevChapter,
   nextChapter,
+  bookType,
 }: ChapterNavigationProps) {
   return (
     <div className="mx-auto max-w-3xl border-t border-border pt-8 space-y-4">
@@ -55,7 +57,7 @@ export function ChapterNavigation({
           href={`/books/${bookId}`}
           className="text-sm text-muted hover:text-foreground transition-colors"
         >
-          &larr; All Chapters
+          &larr; All {bookType === "songs" ? "Songs" : "Chapters"}
         </Link>
       </div>
     </div>

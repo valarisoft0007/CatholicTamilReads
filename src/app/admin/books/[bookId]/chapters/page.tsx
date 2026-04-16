@@ -110,14 +110,14 @@ export default function AdminChaptersPage() {
     <div className="max-w-4xl">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold sm:text-2xl">Chapters</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">{book?.bookType === "songs" ? "Songs" : "Chapters"}</h1>
           {book && <p className="text-sm text-muted">{book.title}</p>}
         </div>
         <Link
           href={`/admin/books/${bookId}/chapters/new`}
           className="rounded-md bg-gold px-4 py-2 text-sm font-medium text-white hover:bg-gold-dark transition-colors"
         >
-          New Chapter
+          New {book?.bookType === "songs" ? "Song" : "Chapter"}
         </Link>
       </div>
 
@@ -137,7 +137,7 @@ export default function AdminChaptersPage() {
 
       {chapters.length === 0 ? (
         <p className="py-10 text-center text-muted">
-          No chapters yet. Add the first chapter.
+          No {book?.bookType === "songs" ? "songs" : "chapters"} yet. Add the first {book?.bookType === "songs" ? "song" : "chapter"}.
         </p>
       ) : (
         <DndContext

@@ -26,10 +26,23 @@ describe('BookCreateSchema', () => {
       expect(result.data.description).toBe('')
       expect(result.data.coverImageUrl).toBe('')
       expect(result.data.isFree).toBe(false)
+      expect(result.data.bookType).toBe('book')
       expect(result.data.ebookFilename).toBe('')
       expect(result.data.ebookPdfUrl).toBe('')
       expect(result.data.ebookEpubUrl).toBe('')
     }
+  })
+
+  it('accepts bookType "songs"', () => {
+    expect(BookCreateSchema.safeParse({ ...validBook, bookType: 'songs' }).success).toBe(true)
+  })
+
+  it('accepts bookType "book"', () => {
+    expect(BookCreateSchema.safeParse({ ...validBook, bookType: 'book' }).success).toBe(true)
+  })
+
+  it('rejects invalid bookType', () => {
+    expect(BookCreateSchema.safeParse({ ...validBook, bookType: 'poem' }).success).toBe(false)
   })
 
   it('rejects empty title', () => {

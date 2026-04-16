@@ -135,7 +135,7 @@ export default function ChapterReaderPage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="mb-1 text-sm text-muted">
-                Chapter {chapter.order}
+                {book.bookType === "songs" ? "Song" : "Chapter"} {chapter.order}
               </p>
               <h1 className="text-xl font-bold sm:text-3xl">{chapter.title}</h1>
               <p className="mt-1 text-xs text-muted">~{readingTime} min read</p>
@@ -170,6 +170,7 @@ export default function ChapterReaderPage() {
             bookId={bookId}
             prevChapter={prevChapter}
             nextChapter={nextChapter}
+            bookType={book.bookType}
           />
         </div>
 

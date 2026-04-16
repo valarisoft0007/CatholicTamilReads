@@ -108,7 +108,7 @@ src/
 │   │   ├── layout.tsx                # Admin layout with sidebar
 │   │   ├── page.tsx                  # Admin dashboard
 │   │   ├── login/page.tsx            # Admin login
-│   │   ├── news/page.tsx             # News management (add/delete items)
+│   │   ├── news/page.tsx             # News management (add/edit/delete items)
 │   │   └── books/
 │   │       ├── page.tsx              # Book list management
 │   │       ├── new/page.tsx          # Create new book
@@ -233,6 +233,7 @@ users/                              # Implicit via Firebase Auth
 | chapterCount | number | Auto-managed on chapter create/delete |
 | order | number | Display sort order |
 | isFree | boolean (optional) | If true, all chapters readable without login |
+| bookType | "book" \| "songs" (optional) | Controls label throughout UI — "Chapters/Chapter" for books, "Songs/Song" for songs; defaults to "book" |
 | viewCount | number (optional) | Total views; created on first increment via server-side API |
 | ebookPdfUrl | string (optional) | Cloudinary URL for published PDF |
 | ebookEpubUrl | string (optional) | Cloudinary URL for published EPUB |
@@ -302,7 +303,8 @@ users/                              # Implicit via Firebase Auth
 
 | Collection | Fields | Purpose |
 |------------|--------|---------|
-| books | status (ASC) + order (ASC) | Published books sorted by display order |
+| books | status (ASC) + order (ASC) | Admin book list sorted by display order |
+| books | status (ASC) + updatedAt (DESC) | Public home page — most recently updated books first |
 | chapters | status (ASC) + order (ASC) | Published chapters sorted by sequence |
 | news | createdAt (DESC) | News items sorted newest-first |
 
@@ -419,9 +421,9 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 
 #### Book Browsing
 - Grid display of published books with cover images
-- Each card shows: cover, title, author, description snippet, chapter count
+- Each card shows: cover, title, author, description snippet, chapter/song count (label depends on book type)
 - "NEW" badge on books published within last 30 days
-- Books sorted by configurable display order
+- Books sorted by most recently updated first (updatedAt DESC) — editing a book or any of its chapters moves it to the top
 
 #### Book Detail Page
 - 3D-styled cover image with drop shadow
@@ -491,6 +493,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 #### News Management
 - Add news items: title + content text
 - List all news items newest-first
+- **Inline edit**: clicking Edit on any item expands it in-place into an editable form; Save calls `PATCH /api/admin/news/[newsId]`; Cancel dismisses without saving
 - Delete individual news items
 - Items appear as responsive cards between the hero and books grid (visible on all screen sizes)
 - Panel is hidden when there are no news items
@@ -499,7 +502,8 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - List all books with status badges (published/draft)
 - Display author name and chapter count per book
 - Actions per book: Edit, View Chapters, Delete
-- Create new book: title, author, description, cover image upload, status, display order
+- Create new book: title, author, description, cover image upload, status, display order, book type
+- **Book type**: Select "Book" (default) or "Songs" per book. Choosing "Songs" changes all "Chapter/Chapters" labels to "Song/Songs" across the admin panel and reader (list headings, item ordinals, navigation, TOC, progress card). Existing books default to "Book" behaviour; change via Edit Book.
 - **Free book toggle**: Mark entire book as free via checkbox in the Edit Book form — no login required for any chapter. Free books show a green "Free" badge on the home page book cards.
 
 #### Chapter Management

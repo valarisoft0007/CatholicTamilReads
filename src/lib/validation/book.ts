@@ -8,6 +8,7 @@ export const BookCreateSchema = z.object({
   status: z.enum(["draft", "published"]),
   order: z.number().int().min(0),
   isFree: z.boolean().optional().default(false),
+  bookType: z.enum(["book", "songs"]).optional().default("book"),
   ebookFilename: z.string().max(200).optional().default(""),
   ebookPdfUrl: z.string().max(500).optional().default(""),
   ebookEpubUrl: z.string().max(500).optional().default(""),
