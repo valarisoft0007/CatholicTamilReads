@@ -14,6 +14,7 @@ export interface Book {
   ebookEpubUrl?: string;
   ebookFilename?: string;
   viewCount?: number;
+  bookType?: "book" | "songs";
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

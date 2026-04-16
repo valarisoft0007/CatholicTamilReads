@@ -116,20 +116,60 @@ describe('PATCH /api/admin/news/[newsId]', () => {
     process.env.ADMIN_JWT_SECRET = 'test-secret'
   })
 
-  it('returns 200 ok for valid JWT and body', async () => {
+  it('returns 200 ok when updating title only', async () => {
     vi.mocked(jwtVerify).mockResolvedValueOnce({ payload: {}, protectedHeader: { alg: 'HS256' } } as never)
     const { PATCH } = await import('@/app/api/admin/news/[newsId]/route')
-    const req = makeAuthRequest('PATCH', '/api/admin/news/news1', { title: 'Updated' })
+    const req = makeAuthRequest('PATCH', '/api/admin/news/news1', { title: 'Updated Title' })
     const res = await PATCH(req, { params: Promise.resolve({ newsId: 'news1' }) })
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.ok).toBe(true)
   })
 
+  it('returns 200 ok when updating content only', async () => {
+    vi.mocked(jwtVerify).mockResolvedValueOnce({ payload: {}, protectedHeader: { alg: 'HS256' } } as never)
+    const { PATCH } = await import('@/app/api/admin/news/[newsId]/route')
+    const req = makeAuthRequest('PATCH', '/api/admin/news/news1', { content: 'Updated content' })
+    const res = await PATCH(req, { params: Promise.resolve({ newsId: 'news1' }) })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.ok).toBe(true)
+  })
+
+  it('returns 200 ok when updating both title and content', async () => {
+    vi.mocked(jwtVerify).mockResolvedValueOnce({ payload: {}, protectedHeader: { alg: 'HS256' } } as never)
+    const { PATCH } = await import('@/app/api/admin/news/[newsId]/route')
+    const req = makeAuthRequest('PATCH', '/api/admin/news/news1', { title: 'New Title', content: 'New content' })
+    const res = await PATCH(req, { params: Promise.resolve({ newsId: 'news1' }) })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.ok).toBe(true)
+  })
+
+  it('calls Firestore update with trimmed fields', async () => {
+    vi.mocked(jwtVerify).mockResolvedValueOnce({ payload: {}, protectedHeader: { alg: 'HS256' } } as never)
+    const { adminDb } = await import('@/lib/firebase/admin')
+    const { PATCH } = await import('@/app/api/admin/news/[newsId]/route')
+    const req = makeAuthRequest('PATCH', '/api/admin/news/news1', { title: '  Trimmed  ', content: '  Content  ' })
+    await PATCH(req, { params: Promise.resolve({ newsId: 'news1' }) })
+    const mockUpdate = (adminDb.collection('news').doc as ReturnType<typeof vi.fn>).mock.results[0]?.value.update
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Trimmed', content: 'Content' })
+    )
+  })
+
   it('returns 400 for empty update body', async () => {
     vi.mocked(jwtVerify).mockResolvedValueOnce({ payload: {}, protectedHeader: { alg: 'HS256' } } as never)
     const { PATCH } = await import('@/app/api/admin/news/[newsId]/route')
     const req = makeAuthRequest('PATCH', '/api/admin/news/news1', {})
+    const res = await PATCH(req, { params: Promise.resolve({ newsId: 'news1' }) })
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 400 for empty title string', async () => {
+    vi.mocked(jwtVerify).mockResolvedValueOnce({ payload: {}, protectedHeader: { alg: 'HS256' } } as never)
+    const { PATCH } = await import('@/app/api/admin/news/[newsId]/route')
+    const req = makeAuthRequest('PATCH', '/api/admin/news/news1', { title: '' })
     const res = await PATCH(req, { params: Promise.resolve({ newsId: 'news1' }) })
     expect(res.status).toBe(400)
   })

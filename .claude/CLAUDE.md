@@ -10,7 +10,7 @@
 - Build: `npm run build`
 - Start: `npm start`
 - Lint: `npm run lint`
-- Unit tests: `npm run test:run` (no external deps, 135 tests)
+- Unit tests: `npm run test:run` (no external deps, 147 tests)
 - Integration tests: `npm run test:integration` (requires emulator running)
 - Start emulator: `npm run emulator:start` (uses firebase.test.json + firestore.test.rules)
 - Test coverage: `npm run test:coverage`
@@ -49,7 +49,7 @@
 - Always use serverTimestamp() for createdAt/updatedAt fields
 - Book.chapterCount is auto-incremented/decremented on chapter create/delete
 - Book.viewCount and Chapter.viewCount — incremented server-side via Admin SDK on each view (rate-limited)
-- Indexes defined in `firestore.indexes.json` (status + order for books and chapters)
+- Indexes defined in `firestore.indexes.json` (status + order for books and chapters; status + updatedAt DESC for public home page ordering)
 
 ## API Routes
 - POST `/api/admin/login` — admin password auth, returns JWT cookie

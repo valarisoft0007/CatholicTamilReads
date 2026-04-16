@@ -68,7 +68,7 @@ export default function AdminBooksPage() {
                   </span>
                 </div>
                 <p className="text-sm text-muted">
-                  {book.authorName} &middot; {book.chapterCount} chapters
+                  {book.authorName} &middot; {book.chapterCount} {book.bookType === "songs" ? "songs" : "chapters"}
                 </p>
               </div>
 
@@ -77,7 +77,7 @@ export default function AdminBooksPage() {
                   href={`/admin/books/${book.id}/chapters`}
                   className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-card-hover transition-colors"
                 >
-                  Chapters
+                  {book.bookType === "songs" ? "Songs" : "Chapters"}
                 </Link>
                 <Link
                   href={`/admin/books/${book.id}`}

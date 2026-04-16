@@ -83,7 +83,8 @@
 - [x] Image upload to Cloudinary (covers + chapter images)
 - [x] Draft/Published status toggle
 - [x] Display order management
-- [x] News management (add/delete items shown on home page sidebar)
+- [x] News management (add/edit/delete items shown on home page sidebar; inline edit via PATCH API)
+- [x] Book type field (`bookType: "book" | "songs"`) — admin dropdown in BookForm; labels "Chapter/Song" adapt throughout admin panel and reader pages
 - [x] Free book toggle — checkbox in BookForm (Edit Book page); Free badge on home page book cards
 - [x] Free chapter toggle — inline toggle switch on chapters list (no need to open chapter edit)
 - [ ] Bulk operations (publish/unpublish multiple)
@@ -120,7 +121,7 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [x] Unit tests — 140 tests (Vitest): Zod validation, utilities, API routes (mocked)
+- [x] Unit tests — 147 tests (Vitest): Zod validation, utilities, API routes (mocked)
 - [x] Integration tests — 51 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge

@@ -3,21 +3,26 @@ export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ChapterForm } from "@/components/admin/ChapterForm";
+import { getBook } from "@/lib/firestore/books";
 import { getChapter } from "@/lib/firestore/chapters";
-import type { Chapter } from "@/types";
+import { ChapterForm } from "@/components/admin/ChapterForm";
+import type { Book, Chapter } from "@/types";
 
 export default function EditChapterPage() {
   const { bookId, chapterId } = useParams<{
     bookId: string;
     chapterId: string;
   }>();
+  const [book, setBook] = useState<Book | null>(null);
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getChapter(bookId, chapterId)
-      .then(setChapter)
+    Promise.all([getBook(bookId), getChapter(bookId, chapterId)])
+      .then(([b, c]) => {
+        setBook(b);
+        setChapter(c);
+      })
       .finally(() => setLoading(false));
   }, [bookId, chapterId]);
 
@@ -33,10 +38,12 @@ export default function EditChapterPage() {
     return <p className="py-10 text-center text-muted">Chapter not found.</p>;
   }
 
+  const label = book?.bookType === "songs" ? "Song" : "Chapter";
+
   return (
     <div>
-      <h1 className="mb-6 text-xl font-bold sm:text-2xl">Edit Chapter</h1>
-      <ChapterForm bookId={bookId} chapter={chapter} />
+      <h1 className="mb-6 text-xl font-bold sm:text-2xl">Edit {label}</h1>
+      <ChapterForm bookId={bookId} chapter={chapter} bookType={book?.bookType} />
     </div>
   );
 }

@@ -60,6 +60,12 @@ describe('createBook', () => {
     expect(book?.createdAt).toBeDefined()
     expect(book?.updatedAt).toBeDefined()
   })
+
+  it('stores and retrieves bookType "songs"', async () => {
+    const id = await createBook({ ...baseBook, bookType: 'songs' })
+    const book = await getBook(id)
+    expect(book?.bookType).toBe('songs')
+  })
 })
 
 describe('getBook', () => {
@@ -77,6 +83,18 @@ describe('getBook', () => {
 })
 
 describe('getPublishedBooks', () => {
+  it('returns empty array when no books exist', async () => {
+    const books = await getPublishedBooks()
+    expect(books).toEqual([])
+  })
+
+  it('returns empty array when only draft books exist', async () => {
+    await createBook({ ...baseBook, status: 'draft', order: 1 })
+    await createBook({ ...baseBook, status: 'draft', order: 2 })
+    const books = await getPublishedBooks()
+    expect(books).toEqual([])
+  })
+
   it('returns only published books', async () => {
     await createBook({ ...baseBook, status: 'draft', order: 1 })
     await createBook({ ...baseBook, status: 'published', order: 2 })
@@ -85,12 +103,45 @@ describe('getPublishedBooks', () => {
     expect(books.length).toBe(1)
   })
 
-  it('returns books ordered by order asc', async () => {
-    await createBook({ ...baseBook, status: 'published', order: 3 })
+  it('returns books ordered by updatedAt desc (most recently updated first)', async () => {
     await createBook({ ...baseBook, status: 'published', order: 1 })
     await createBook({ ...baseBook, status: 'published', order: 2 })
+    await createBook({ ...baseBook, status: 'published', order: 3 })
     const books = await getPublishedBooks()
-    expect(books.map((b) => b.order)).toEqual([1, 2, 3])
+    // last created book (order=3) has the latest updatedAt and appears first
+    expect(books[0].order).toBe(3)
+    expect(books[books.length - 1].order).toBe(1)
+  })
+
+  it('updated book rises to the top', async () => {
+    const id1 = await createBook({ ...baseBook, status: 'published', order: 1 })
+    await createBook({ ...baseBook, status: 'published', order: 2 })
+    await createBook({ ...baseBook, status: 'published', order: 3 })
+    // update the oldest book — it should now appear first
+    await updateBook(id1, { title: 'Recently Updated' })
+    const books = await getPublishedBooks()
+    expect(books[0].order).toBe(1)
+    expect(books[0].title).toBe('Recently Updated')
+  })
+
+  it('excludes draft books even when they are the most recently updated', async () => {
+    const id1 = await createBook({ ...baseBook, status: 'published', order: 1 })
+    await createBook({ ...baseBook, status: 'published', order: 2 })
+    const draftId = await createBook({ ...baseBook, status: 'draft', order: 3 })
+    // update the draft last so it would be first if drafts were included
+    await updateBook(draftId, { title: 'Updated Draft' })
+    await updateBook(id1, { title: 'Updated Published' })
+    const books = await getPublishedBooks()
+    expect(books.every((b) => b.status === 'published')).toBe(true)
+    expect(books.length).toBe(2)
+  })
+
+  it('returns full book data including id for each result', async () => {
+    const id = await createBook({ ...baseBook, status: 'published', order: 1 })
+    const books = await getPublishedBooks()
+    expect(books[0].id).toBe(id)
+    expect(books[0].title).toBe(baseBook.title)
+    expect(books[0].chapterCount).toBe(0)
   })
 })
 

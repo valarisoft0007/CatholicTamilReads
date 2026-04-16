@@ -123,7 +123,10 @@ export default function BookDetailPage() {
           <p className="mb-4 text-sm text-muted">{book.description}</p>
           <p className="text-sm text-muted">
             {chapters.length}{" "}
-            {chapters.length === 1 ? "chapter" : "chapters"} published
+            {chapters.length === 1
+              ? book.bookType === "songs" ? "song" : "chapter"
+              : book.bookType === "songs" ? "songs" : "chapters"}{" "}
+            published
           </p>
 
           {/* CTA Buttons */}
@@ -187,13 +190,13 @@ export default function BookDetailPage() {
             />
           </div>
           <p className="mt-2 text-xs text-muted">
-            Currently on Chapter {progress.lastChapterOrder}
+            Currently on {book.bookType === "songs" ? "Song" : "Chapter"} {progress.lastChapterOrder}
           </p>
         </div>
       )}
 
       {/* Table of Contents */}
-      <h2 className="mb-4 text-base font-semibold sm:text-xl">Chapters</h2>
+      <h2 className="mb-4 text-base font-semibold sm:text-xl">{book.bookType === "songs" ? "Songs" : "Chapters"}</h2>
       <TableOfContents
         bookId={bookId}
         chapters={chapters}

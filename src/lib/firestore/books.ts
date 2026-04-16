@@ -22,7 +22,7 @@ export async function getPublishedBooks(): Promise<Book[]> {
   const q = query(
     booksRef(),
     where("status", "==", "published"),
-    orderBy("order", "asc")
+    orderBy("updatedAt", "desc")
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Book));

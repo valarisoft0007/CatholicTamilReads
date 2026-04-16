@@ -9,9 +9,10 @@ import type { Chapter } from "@/types";
 interface ChapterFormProps {
   bookId: string;
   chapter?: Chapter;
+  bookType?: "book" | "songs";
 }
 
-export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
+export function ChapterForm({ bookId, chapter, bookType }: ChapterFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -59,14 +60,14 @@ export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
       <div className="flex gap-4">
         <div className="flex-1">
           <label className="mb-1 block text-sm font-medium">
-            Chapter Title
+            {bookType === "songs" ? "Song" : "Chapter"} Title
           </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full rounded-md border border-border px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-            placeholder="Chapter title"
+            placeholder={`${bookType === "songs" ? "Song" : "Chapter"} title`}
             required
           />
         </div>
@@ -111,8 +112,8 @@ export function ChapterForm({ bookId, chapter }: ChapterFormProps) {
           {saving
             ? "Saving..."
             : chapter
-            ? "Update Chapter"
-            : "Create Chapter"}
+            ? `Update ${bookType === "songs" ? "Song" : "Chapter"}`
+            : `Create ${bookType === "songs" ? "Song" : "Chapter"}`}
         </button>
         <button
           type="button"

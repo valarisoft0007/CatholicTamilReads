@@ -120,7 +120,7 @@ src/__tests__/
 
 | Command | Tests | Requires |
 |---------|-------|----------|
-| `npm run test:run` | 140 unit + API tests | Nothing |
+| `npm run test:run` | 147 unit + API tests | Nothing |
 | `npm run test:integration` | 51 Firestore + Auth emulator tests | Emulator running |
 | `npm run emulator:start` | — | Java 17+, firebase-tools |
 
@@ -156,7 +156,7 @@ src/
 ## Features
 
 ### Public (Readers)
-- Browse published books with cover images and chapter counts; free books shown with a **Free** badge
+- Browse published books with cover images and chapter/song counts; free books shown with a **Free** badge; books ordered by most recently updated first
 - **Login required to read** — sign in with Google; free books and free sample chapters are readable without login
 - Read chapters with customizable font size and progress tracking
 - Auto-save reading progress (scroll position + last chapter)
@@ -169,6 +169,7 @@ src/
 ### Admin Panel (`/admin`)
 - Dashboard with published/draft/chapter stats, **total views**, and **top books by views**
 - Book CRUD with cover image upload
+- **Book type** — select "Book" (default) or "Songs" per book; all "Chapter/Chapters" labels adapt to "Song/Songs" across admin and reader pages
 - **Free book toggle** — mark entire book as free (no login required) via the Edit Book form
 - Chapter CRUD with Tiptap rich text editor
 - **Free chapter toggle** — inline toggle per chapter on the chapters list (no need to open edit form)
