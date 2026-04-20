@@ -20,7 +20,13 @@ export default function NewChapterPage() {
   return (
     <div>
       <h1 className="mb-6 text-xl font-bold sm:text-2xl">New {label}</h1>
-      <ChapterForm bookId={bookId} bookType={book?.bookType} />
+      {book ? (
+        <ChapterForm bookId={bookId} bookType={book.bookType} nextOrder={book.chapterCount + 1} />
+      ) : (
+        <div className="flex justify-center py-10">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
+        </div>
+      )}
     </div>
   );
 }

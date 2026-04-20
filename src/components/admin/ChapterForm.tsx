@@ -10,16 +10,17 @@ interface ChapterFormProps {
   bookId: string;
   chapter?: Chapter;
   bookType?: "book" | "songs";
+  nextOrder?: number;
 }
 
-export function ChapterForm({ bookId, chapter, bookType }: ChapterFormProps) {
+export function ChapterForm({ bookId, chapter, bookType, nextOrder }: ChapterFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [chapterId] = useState(chapter?.id || `new-${Date.now()}`);
   const [title, setTitle] = useState(chapter?.title || "");
   const [content, setContent] = useState(chapter?.content || "");
-  const [order, setOrder] = useState(chapter?.order || 1);
+  const [order, setOrder] = useState(chapter?.order ?? nextOrder ?? 1);
   const [status, setStatus] = useState<"draft" | "published">(
     chapter?.status || "draft"
   );

@@ -434,6 +434,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
   - Checkmark: completed chapters
   - Gold number: current chapter
   - Gray number: upcoming chapters
+- Paginated TOC: 25 published chapters per page, Prev/Next navigation (Firestore cursor-based); `book.chapterCount` used for progress % and total count so values stay accurate across pages
 
 #### Chapter Reader
 - Full HTML content rendering with serif typography (Lora font)
@@ -514,6 +515,8 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - **Content preview**: Preview button in chapter editor opens a modal showing the current (unsaved) content rendered with the same prose styles as the reader page
 - Delete chapter (auto-decrements book's chapter count)
 - **Free chapter toggle**: Inline toggle switch per chapter directly on the chapters list — mark individual chapters as free samples without opening the edit form
+- **Paginated chapter list**: 20 chapters per page (Prev/Next, Firestore cursor-based, descending order); drag-and-drop reorder scoped to current page; cross-page moves done by editing the order number directly
+- **Auto-numbered new chapters**: order field pre-filled as `chapterCount + 1` when creating a new chapter
 
 #### Rich Text Editor (Tiptap)
 - Formatting: Bold, Italic, Underline
@@ -738,7 +741,7 @@ Two-layer analytics: server-side Firestore counters for admin visibility, and Fi
 2. **Single admin password** — All admins share one password; no per-user admin accounts
 3. **In-memory rate limiting** — Rate limiters reset on server cold start (serverless); no persistent store (Redis) used; analytics view counts may be slightly over-counted across instances
 4. **No search** — No book or content search functionality
-5. **No pagination** — All published books loaded at once
+5. **No book-list pagination** — All published books loaded at once (chapter lists are paginated)
 6. **No error boundaries** — No React error boundary components
 7. **Empty UI component library** — `src/components/ui/` exists but is unused
 8. **No offline support** — No service worker or PWA configuration

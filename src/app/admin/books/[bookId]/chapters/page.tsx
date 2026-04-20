@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -22,29 +22,43 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { getBook } from "@/lib/firestore/books";
-import { getAllChapters } from "@/lib/firestore/chapters";
+import { getChaptersPage } from "@/lib/firestore/chapters";
 import { ExportButtons } from "@/components/admin/ExportButtons";
 import type { Book, Chapter } from "@/types";
+import type { QueryDocumentSnapshot } from "firebase/firestore";
+
+const PAGE_SIZE = 20;
 
 export default function AdminChaptersPage() {
   const { bookId } = useParams<{ bookId: string }>();
   const [book, setBook] = useState<Book | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [cursors, setCursors] = useState<(QueryDocumentSnapshot | null)[]>([null]);
+  const [hasMore, setHasMore] = useState(false);
 
-  const loadData = async () => {
+  const loadPage = useCallback(async (pageIndex: number, bookData?: Book | null) => {
     setLoading(true);
-    const [b, c] = await Promise.all([
-      getBook(bookId),
-      getAllChapters(bookId),
+    const cursor = pageIndex < cursors.length ? cursors[pageIndex] : null;
+    const [b, result] = await Promise.all([
+      pageIndex === 0 ? getBook(bookId) : Promise.resolve(bookData ?? null),
+      getChaptersPage(bookId, cursor),
     ]);
-    setBook(b);
-    setChapters(c);
+    if (pageIndex === 0 && b) setBook(b);
+    setChapters(result.chapters);
+    setHasMore(result.hasMore);
+    if (result.lastDoc && cursors.length === pageIndex + 1) {
+      setCursors((prev) => [...prev, result.lastDoc]);
+    }
+    setCurrentPage(pageIndex);
     setLoading(false);
-  };
+    return b;
+  }, [bookId, cursors]);
 
   useEffect(() => {
-    loadData();
+    loadPage(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId]);
 
   const sensors = useSensors(
@@ -62,17 +76,21 @@ export default function AdminChaptersPage() {
     const newIndex = chapters.findIndex((c) => c.id === over.id);
     const previousChapters = chapters;
 
-    const reordered = arrayMove(chapters, oldIndex, newIndex).map((c, i) => ({
-      ...c,
-      order: i + 1,
-    }));
+    const moved = arrayMove(chapters, oldIndex, newIndex);
+    const total = moved.length;
+    const reordered = moved.map((c, i) => ({ ...c, order: total - i + currentPage * PAGE_SIZE }));
     setChapters(reordered);
+
+    const startOrder = currentPage * PAGE_SIZE + 1;
 
     try {
       await fetch(`/api/admin/books/${bookId}/chapters/reorder`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderedIds: reordered.map((c) => c.id) }),
+        body: JSON.stringify({
+          orderedIds: [...reordered].reverse().map((c) => c.id),
+          startOrder,
+        }),
       });
     } catch {
       setChapters(previousChapters);
@@ -83,11 +101,13 @@ export default function AdminChaptersPage() {
   const handleDelete = async (chapterId: string, title: string) => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
     await fetch(`/api/admin/books/${bookId}/chapters/${chapterId}`, { method: "DELETE" });
-    loadData();
+    // Reset to page 1 so cursor chain stays consistent after deletion
+    setCursors([null]);
+    setCurrentPage(0);
+    await loadPage(0, book);
   };
 
   const handleToggleChapterFree = async (chapter: Chapter) => {
-    // Optimistic update
     setChapters((prev) =>
       prev.map((c) => (c.id === chapter.id ? { ...c, isFree: !c.isFree } : c))
     );
@@ -130,38 +150,62 @@ export default function AdminChaptersPage() {
             ebookFilename={book.ebookFilename}
             ebookPdfUrl={book.ebookPdfUrl}
             ebookEpubUrl={book.ebookEpubUrl}
-            onPublishChange={loadData}
+            onPublishChange={() => loadPage(currentPage, book)}
           />
         </div>
       )}
 
-      {chapters.length === 0 ? (
+      {chapters.length === 0 && currentPage === 0 ? (
         <p className="py-10 text-center text-muted">
           No {book?.bookType === "songs" ? "songs" : "chapters"} yet. Add the first {book?.bookType === "songs" ? "song" : "chapter"}.
         </p>
       ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={chapters.map((c) => c.id)}
-            strategy={verticalListSortingStrategy}
+        <>
+          <p className="mb-3 text-xs text-muted">
+            Drag to reorder within this page. To move a {book?.bookType === "songs" ? "song" : "chapter"} across pages, edit its order number directly.
+          </p>
+
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            <div className="space-y-2">
-              {chapters.map((chapter) => (
-                <SortableChapterItem
-                  key={chapter.id}
-                  chapter={chapter}
-                  bookId={bookId}
-                  onToggleFree={handleToggleChapterFree}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              items={chapters.map((c) => c.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {chapters.map((chapter) => (
+                  <SortableChapterItem
+                    key={chapter.id}
+                    chapter={chapter}
+                    bookId={bookId}
+                    onToggleFree={handleToggleChapterFree}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+
+          <div className="mt-6 flex items-center justify-between">
+            <button
+              disabled={currentPage === 0}
+              onClick={() => loadPage(currentPage - 1, book)}
+              className="rounded-md border border-border px-4 py-2 text-sm disabled:opacity-40 hover:bg-card transition-colors"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-muted">Page {currentPage + 1}</span>
+            <button
+              disabled={!hasMore}
+              onClick={() => loadPage(currentPage + 1, book)}
+              className="rounded-md border border-border px-4 py-2 text-sm disabled:opacity-40 hover:bg-card transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

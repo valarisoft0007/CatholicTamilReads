@@ -28,4 +28,5 @@ export const ChapterUpdateSchema = ChapterCreateSchema.partial();
 
 export const ReorderSchema = z.object({
   orderedIds: z.array(z.string().min(1)).min(1),
+  startOrder: z.number().int().min(1).optional().default(1),
 });
