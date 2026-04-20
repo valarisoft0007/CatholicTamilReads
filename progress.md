@@ -59,6 +59,7 @@
 - [x] Font size toggle (S/M/L with localStorage persistence)
 - [x] Previous/Next chapter navigation
 - [x] Table of contents with read/current/upcoming indicators
+- [x] Chapter list pagination (user TOC — 25/page, Prev/Next, Firestore cursor-based)
 - [x] Back to top floating button
 - [x] Estimated reading time
 - [x] Drop cap styling on first paragraph
@@ -89,6 +90,8 @@
 - [x] Free chapter toggle — inline toggle switch on chapters list (no need to open chapter edit)
 - [ ] Bulk operations (publish/unpublish multiple)
 - [x] Chapter reordering via drag-and-drop (@dnd-kit, batch Firestore write, optimistic UI)
+- [x] Chapter list pagination (admin — 20/page, Prev/Next, Firestore cursor-based; DnD scoped to current page)
+- [x] New chapter auto-numbered (order = chapterCount + 1, pre-filled in form)
 - [x] Content preview before publishing (live modal in ChapterForm, reuses ChapterContent)
 - [x] Analytics dashboard (views, read time, popular books) — Firestore viewCount + Firebase Analytics events; see docs/analytics-feature-plan.md
 - [x] User management panel — read-only registered user count on admin dashboard (GET /api/admin/users, stat card)
@@ -122,7 +125,7 @@
 
 ## DevOps & Quality
 - [x] Unit tests — 147 tests (Vitest): Zod validation, utilities, API routes (mocked)
-- [x] Integration tests — 51 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
+- [x] Integration tests — 62 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge
 - [ ] End-to-end tests (Playwright/Cypress)
@@ -159,16 +162,16 @@
 | Core Infrastructure | 9 | 0 |
 | Authentication | 7 | 7 |
 | Public Pages | 8 | 3 |
-| Reader Features | 11 | 5 |
-| Admin Panel | 18 | 4 |
+| Reader Features | 12 | 5 |
+| Admin Panel | 20 | 4 |
 | Theming & UI | 10 | 3 |
 | Data Layer | 9 | 2 |
 | DevOps & Quality | 4 | 6 |
 | Security | 15 | 0 |
 | eBook Export | 20 | 0 |
-| **Total** | **111** | **30** |
+| **Total** | **113** | **30** |
 
-**Overall Progress: ~76% complete**
+**Overall Progress: ~79% complete**
 
 ---
 

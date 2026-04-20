@@ -121,7 +121,7 @@ src/__tests__/
 | Command | Tests | Requires |
 |---------|-------|----------|
 | `npm run test:run` | 147 unit + API tests | Nothing |
-| `npm run test:integration` | 51 Firestore + Auth emulator tests | Emulator running |
+| `npm run test:integration` | 62 Firestore + Auth emulator tests | Emulator running |
 | `npm run emulator:start` | — | Java 17+, firebase-tools |
 
 ## Project Structure
@@ -160,6 +160,7 @@ src/
 - **Login required to read** — sign in with Google; free books and free sample chapters are readable without login
 - Read chapters with customizable font size and progress tracking
 - Auto-save reading progress (scroll position + last chapter)
+- **Paginated table of contents** — 25 chapters per page with Prev/Next navigation (Firestore cursor-based; scales to 100+ chapters)
 - Bookmark chapters and favorite books
 - User profile with reading history, bookmarks, and favorites
 - Dark/Light theme (Vatican Ivory / Cathedral Dark)
@@ -173,7 +174,8 @@ src/
 - **Free book toggle** — mark entire book as free (no login required) via the Edit Book form
 - Chapter CRUD with Tiptap rich text editor
 - **Free chapter toggle** — inline toggle per chapter on the chapters list (no need to open edit form)
-- **Chapter drag-and-drop reorder** — drag handle on each row; batch Firestore write via `PATCH /api/admin/books/[bookId]/chapters/reorder`
+- **Chapter drag-and-drop reorder** — drag handle on each row; batch Firestore write via `PATCH /api/admin/books/[bookId]/chapters/reorder`; reorder scoped to current page
+- **Paginated chapter list** — 20 chapters per page with Prev/Next navigation; new chapter auto-numbered as last + 1
 - **Content preview modal** — preview chapter content before saving using the same reader prose styles
 - "Free" badge on book cards and free chapter indicators in table of contents
 - Draft/Published status management

@@ -36,10 +36,11 @@ export async function PATCH(
   const chaptersRef = adminDb.collection("books").doc(bookId).collection("chapters");
   const batch = adminDb.batch();
 
+  const startOrder = parsed.data.startOrder ?? 1;
   parsed.data.orderedIds.forEach((chapterId, index) => {
     const chapterRef = chaptersRef.doc(chapterId);
     batch.update(chapterRef, {
-      order: index + 1,
+      order: startOrder + index,
       updatedAt: FieldValue.serverTimestamp(),
     });
   });

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getBook } from "@/lib/firestore/books";
-import { getPublishedChapters } from "@/lib/firestore/chapters";
+import { getPublishedChaptersPage } from "@/lib/firestore/chapters";
 import { getProgress } from "@/lib/firestore/reading-progress";
 import { TableOfContents } from "@/components/books/TableOfContents";
 import { DownloadButtons } from "@/components/books/DownloadButtons";
@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getClientAnalytics } from "@/lib/firebase/client";
 import { logEvent } from "firebase/analytics";
 import type { Book, Chapter, ReadingProgress } from "@/types";
+import type { QueryDocumentSnapshot } from "firebase/firestore";
 
 export default function BookDetailPage() {
   const { bookId } = useParams<{ bookId: string }>();
@@ -22,15 +23,23 @@ export default function BookDetailPage() {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [progress, setProgress] = useState<ReadingProgress | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tocPage, setTocPage] = useState(0);
+  const [pageCursors, setPageCursors] = useState<(QueryDocumentSnapshot | null)[]>([null]);
+  const [hasMore, setHasMore] = useState(false);
+  const [tocLoading, setTocLoading] = useState(false);
+  const [firstChapterId, setFirstChapterId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
-      const [b, c] = await Promise.all([
+      const [b, result] = await Promise.all([
         getBook(bookId),
-        getPublishedChapters(bookId),
+        getPublishedChaptersPage(bookId, null),
       ]);
       setBook(b);
-      setChapters(c);
+      setChapters(result.chapters);
+      setHasMore(result.hasMore);
+      if (result.lastDoc) setPageCursors([null, result.lastDoc]);
+      if (result.chapters.length > 0) setFirstChapterId(result.chapters[0].id);
 
       // Track book view (fire-and-forget)
       if (b?.status === "published") {
@@ -54,6 +63,19 @@ export default function BookDetailPage() {
     }
     load();
   }, [bookId, user]);
+
+  const handleTocPage = async (pageIndex: number) => {
+    setTocLoading(true);
+    const cursor = pageIndex < pageCursors.length ? pageCursors[pageIndex] : null;
+    const result = await getPublishedChaptersPage(bookId, cursor);
+    setChapters(result.chapters);
+    setHasMore(result.hasMore);
+    if (result.lastDoc && pageCursors.length === pageIndex + 1) {
+      setPageCursors((prev) => [...prev, result.lastDoc]);
+    }
+    setTocPage(pageIndex);
+    setTocLoading(false);
+  };
 
   if (loading) {
     return (
@@ -83,13 +105,16 @@ export default function BookDetailPage() {
     );
   }
 
-  const progressPercent = progress
+  const progressPercent = progress && book.chapterCount > 0
     ? Math.round(
         ((progress.lastChapterOrder - 1 + progress.scrollPosition / 100) /
-          chapters.length) *
+          book.chapterCount) *
           100
       )
     : 0;
+
+  const chapterLabel = book.bookType === "songs" ? "song" : "chapter";
+  const chaptersLabel = book.bookType === "songs" ? "songs" : "chapters";
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -122,16 +147,14 @@ export default function BookDetailPage() {
           <p className="mb-2 text-muted">by {book.authorName}</p>
           <p className="mb-4 text-sm text-muted">{book.description}</p>
           <p className="text-sm text-muted">
-            {chapters.length}{" "}
-            {chapters.length === 1
-              ? book.bookType === "songs" ? "song" : "chapter"
-              : book.bookType === "songs" ? "songs" : "chapters"}{" "}
+            {book.chapterCount}{" "}
+            {book.chapterCount === 1 ? chapterLabel : chaptersLabel}{" "}
             published
           </p>
 
           {/* CTA Buttons */}
           <div className="mt-4 flex flex-wrap gap-3">
-            {progress && chapters.length > 0 && (
+            {progress && book.chapterCount > 0 && (
               <Link
                 href={`/books/${bookId}/chapters/${progress.lastChapterId}`}
                 className="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-gold-dark hover:shadow-lg"
@@ -144,9 +167,9 @@ export default function BookDetailPage() {
               </Link>
             )}
 
-            {!progress && chapters.length > 0 && (
+            {!progress && firstChapterId && (
               <Link
-                href={`/books/${bookId}/chapters/${chapters[0].id}`}
+                href={`/books/${bookId}/chapters/${firstChapterId}`}
                 className="inline-flex items-center gap-2 rounded-lg bg-gold px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-gold-dark hover:shadow-lg"
               >
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -170,7 +193,7 @@ export default function BookDetailPage() {
       </div>
 
       {/* Progress Card */}
-      {progress && chapters.length > 0 && (
+      {progress && book.chapterCount > 0 && (
         <div className="mb-8 rounded-xl border border-gold/20 bg-gold/5 p-4">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium">Your Progress</span>
@@ -202,6 +225,12 @@ export default function BookDetailPage() {
         chapters={chapters}
         progress={progress}
         bookIsFree={book.isFree}
+        tocPage={tocPage}
+        hasMore={hasMore}
+        hasPrev={tocPage > 0}
+        tocLoading={tocLoading}
+        onNext={() => handleTocPage(tocPage + 1)}
+        onPrev={() => handleTocPage(tocPage - 1)}
       />
     </div>
   );

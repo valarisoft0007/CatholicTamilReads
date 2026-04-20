@@ -9,11 +9,20 @@ import {
   query,
   where,
   orderBy,
+  limit,
+  startAfter,
   serverTimestamp,
   increment,
+  type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { getClientDb } from "@/lib/firebase/client";
 import type { Chapter } from "@/types";
+
+export interface ChapterPage {
+  chapters: Chapter[];
+  lastDoc: QueryDocumentSnapshot | null;
+  hasMore: boolean;
+}
 
 function chaptersRef(bookId: string) {
   return collection(getClientDb(), "books", bookId, "chapters");
@@ -32,11 +41,50 @@ export async function getPublishedChapters(bookId: string): Promise<Chapter[]> {
 }
 
 export async function getAllChapters(bookId: string): Promise<Chapter[]> {
-  const q = query(chaptersRef(bookId), orderBy("order", "asc"));
+  const q = query(chaptersRef(bookId), orderBy("order", "desc"));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(
     (d) => ({ id: d.id, bookId, ...d.data() } as Chapter)
   );
+}
+
+export async function getChaptersPage(
+  bookId: string,
+  cursor: QueryDocumentSnapshot | null,
+  pageSize = 20
+): Promise<ChapterPage> {
+  const base = query(chaptersRef(bookId), orderBy("order", "desc"), limit(pageSize + 1));
+  const q = cursor ? query(base, startAfter(cursor)) : base;
+  const snap = await getDocs(q);
+  const hasMore = snap.docs.length > pageSize;
+  const docs = hasMore ? snap.docs.slice(0, pageSize) : snap.docs;
+  return {
+    chapters: docs.map((d) => ({ id: d.id, bookId, ...d.data() } as Chapter)),
+    lastDoc: docs.at(-1) ?? null,
+    hasMore,
+  };
+}
+
+export async function getPublishedChaptersPage(
+  bookId: string,
+  cursor: QueryDocumentSnapshot | null,
+  pageSize = 25
+): Promise<ChapterPage> {
+  const base = query(
+    chaptersRef(bookId),
+    where("status", "==", "published"),
+    orderBy("order", "asc"),
+    limit(pageSize + 1)
+  );
+  const q = cursor ? query(base, startAfter(cursor)) : base;
+  const snap = await getDocs(q);
+  const hasMore = snap.docs.length > pageSize;
+  const docs = hasMore ? snap.docs.slice(0, pageSize) : snap.docs;
+  return {
+    chapters: docs.map((d) => ({ id: d.id, bookId, ...d.data() } as Chapter)),
+    lastDoc: docs.at(-1) ?? null,
+    hasMore,
+  };
 }
 
 export async function getChapter(
