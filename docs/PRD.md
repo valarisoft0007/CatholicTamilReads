@@ -92,7 +92,8 @@ A chapter-by-chapter book reading platform designed for Catholic Tamil literatur
 ```
 src/
 ├── app/                              # Next.js App Router
-│   ├── layout.tsx                    # Root layout (providers, header, footer)
+│   ├── layout.tsx                    # Root layout (providers, header, footer, favicon metadata)
+│   ├── icon.png                      # Site favicon (Next.js App Router file convention)
 │   ├── page.tsx                      # Home page (hero + book grid)
 │   ├── globals.css                   # Theme variables + global styles
 │   ├── auth/
@@ -474,8 +475,11 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 
 #### Hero Section
 - Catholic-themed landing section
-- Animated floating icons: cross, bible, rosary, candle
-- Welcome text and call-to-action
+- Full-bleed background image (`public/images/ctrs_image_12.jpg`) via Next.js `Image` with `fill` + `object-cover`
+- 30% black overlay for text legibility; image is `aria-hidden` (decorative)
+- White title + subtitle with drop-shadow; gold "Start Exploring" CTA button
+- Unauthenticated users see a "Create a free account" hint below the button
+- SVG icon set (cross, bible, rosary, candle) retained as commented-out code in `HeroSection.tsx` for potential future use
 
 #### Home Page Layout
 - News panel renders between the hero section and the books grid
@@ -558,7 +562,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 ### Special Styles
 - `.chapter-content` — Prose styling with 1.8 line-height, drop cap on first letter
 - `.skeleton` — Shimmer animation for loading states
-- `.animate-float` — Gentle floating animation for hero section icons
+- `.animate-float` — Gentle floating animation (hero icon set, currently commented out)
 - Responsive font sizing: 0.95rem mobile, 1rem desktop for chapter content
 
 ---

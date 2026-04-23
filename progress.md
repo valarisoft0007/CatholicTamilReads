@@ -104,7 +104,8 @@
 - [x] Responsive mobile navigation (hamburger menu)
 - [x] Book detail page responsive layout — cover stacked above text on mobile, side-by-side on sm+
 - [x] Loading skeleton animations
-- [x] Hero section with animated floating icons
+- [x] Hero section with full-bleed background image (ctrs_image_12.jpg, 30% dark overlay, white text)
+- [x] Site favicon (src/app/icon.png — Next.js App Router convention + metadata icons field)
 - [x] Google Fonts (Inter + Lora)
 - [~] Accessibility audit (WCAG compliance) — quick wins done: skip link, aria-hidden on decorative elements, progressbar role, aria-label on nav
 - [~] Keyboard navigation improvements — focus-visible ring (globals.css) + skip link done; missing: focus trap in modals, Escape to close menus, arrow key shortcuts in reader
@@ -124,7 +125,7 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [x] Unit tests — 147 tests (Vitest): Zod validation, utilities, API routes (mocked)
+- [x] Unit tests — 163 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata)
 - [x] Integration tests — 62 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge
