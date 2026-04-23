@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "Catholic Tamil Reads",
   description:
     "A Catholic Tamil book website — read inspiring books chapter by chapter.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
