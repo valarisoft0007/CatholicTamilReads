@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
+import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import ImageExtension from "@tiptap/extension-image";
 import LinkExtension from "@tiptap/extension-link";
@@ -9,11 +10,22 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { uploadImageViaApi, getChapterImagePath } from "@/lib/firebase/storage";
 
+// For songs/lyrics: Enter inserts <br> instead of creating a new <p>
+const EnterAsLineBreak = Extension.create({
+  name: "enterAsLineBreak",
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => this.editor.commands.setHardBreak(),
+    };
+  },
+});
+
 interface RichTextEditorProps {
   content: string;
   onChange: (html: string) => void;
   bookId?: string;
   chapterId?: string;
+  bookType?: "book" | "songs";
 }
 
 function ToolbarButton({
@@ -43,14 +55,16 @@ function ToolbarButton({
   );
 }
 
-export function RichTextEditor({ content, onChange, bookId, chapterId }: RichTextEditorProps) {
+export function RichTextEditor({ content, onChange, bookId, chapterId, bookType }: RichTextEditorProps) {
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isSongs = bookType === "songs";
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3, 4] },
       }),
+      ...(isSongs ? [EnterAsLineBreak] : []),
       Underline,
       LinkExtension.configure({
         openOnClick: false,
@@ -66,8 +80,9 @@ export function RichTextEditor({ content, onChange, bookId, chapterId }: RichTex
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-lg max-w-none min-h-[400px] p-4 focus:outline-none",
+        class: isSongs
+          ? "prose prose-lg max-w-none min-h-[400px] p-4 focus:outline-none [&_p]:my-0 [&_p]:leading-snug"
+          : "prose prose-lg max-w-none min-h-[400px] p-4 focus:outline-none",
       },
     },
   });

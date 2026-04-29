@@ -47,4 +47,11 @@ describe('sanitizeHtml', () => {
     const result = sanitizeHtml('Hello world')
     expect(result).toContain('Hello world')
   })
+
+  it('preserves <br> line breaks used in songs/lyrics content', () => {
+    const result = sanitizeHtml('<p>line1<br>line2</p>')
+    expect(result).toContain('<br>')
+    expect(result).toContain('line1')
+    expect(result).toContain('line2')
+  })
 })

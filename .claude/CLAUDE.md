@@ -10,7 +10,7 @@
 - Build: `npm run build`
 - Start: `npm start`
 - Lint: `npm run lint`
-- Unit tests: `npm run test:run` (no external deps, 163 tests)
+- Unit tests: `npm run test:run` (no external deps, 172 tests — validation, lib, api, components)
 - Integration tests: `npm run test:integration` (requires emulator running)
 - Start emulator: `npm run emulator:start` (uses firebase.test.json + firestore.test.rules)
 - Test coverage: `npm run test:coverage`
@@ -73,7 +73,8 @@
 - Tailwind CSS with CSS custom properties for theming (defined in globals.css)
 - Two themes: Vatican Ivory (light) and Cathedral Dark (dark) via next-themes
 - Fonts: Inter (UI/sans) and Lora (content/serif) from Google Fonts
-- Chapter content uses `.chapter-content` class with prose styling and drop cap
+- Chapter content uses `.chapter-content` class with prose styling and drop cap (books only)
+- Songs content additionally uses `.songs-content` class — removes paragraph gaps, 1.6 line-height, no drop cap
 
 ## Conventions
 - Path alias: `@/*` maps to `src/*`
@@ -81,8 +82,8 @@
 - Image optimization configured for Cloudinary and Firebase Storage domains in next.config.ts
 - Environment variables: NEXT_PUBLIC_* for client, others are server-only
 - See `.env.example` for all required env vars
-- No test framework configured yet
-- No CI/CD or Docker configured
+- Tests: Vitest (unit + integration); GitHub Actions CI (lint → unit → integration); branch protection on main
+- No Docker or staging environment configured
 - Analytics: Firestore viewCount (server-side) + Firebase Analytics events (client-side, fire-and-forget)
 - Donation feature planned — blocked on Razorpay/PayPal account setup; see docs/donation-feature-plan.md
 - Audio TTS planned — see docs/audio-tts-feature-plan.md

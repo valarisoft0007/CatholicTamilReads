@@ -101,7 +101,7 @@ export function ChapterForm({ bookId, chapter, bookType, nextOrder }: ChapterFor
 
       <div>
         <label className="mb-1 block text-sm font-medium">Content</label>
-        <RichTextEditor content={content} onChange={setContent} bookId={bookId} chapterId={chapterId} />
+        <RichTextEditor content={content} onChange={setContent} bookId={bookId} chapterId={chapterId} bookType={bookType} />
       </div>
 
       <div className="flex gap-3">
@@ -158,7 +158,7 @@ export function ChapterForm({ bookId, chapter, bookType, nextOrder }: ChapterFor
           </div>
           <div className="px-6 py-8">
             {content ? (
-              <ChapterContent html={content} />
+              <ChapterContent html={content} bookType={bookType} />
             ) : (
               <p className="py-12 text-center text-muted-foreground">No content yet.</p>
             )}
