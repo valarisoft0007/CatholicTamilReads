@@ -530,6 +530,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - Links: URL insertion
 - History: Undo/Redo
 - Output: Clean HTML for reader rendering
+- **Songs mode** (`bookType="songs"`): Enter key inserts a hard break (`<br>`) instead of a new paragraph, eliminating the inter-line gap between lyric lines. Pressing Enter twice creates a blank line between stanzas. Editor CSS also removes paragraph margins for tight lyric display. Preview modal reflects the same layout.
 
 #### Image Upload
 - File validation: images only, 5MB maximum
@@ -560,7 +561,8 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - **Serif**: Lora — used for book content, headings, literary elements
 
 ### Special Styles
-- `.chapter-content` — Prose styling with 1.8 line-height, drop cap on first letter
+- `.chapter-content` — Prose styling with 1.8 line-height, drop cap on first letter (books only)
+- `.songs-content` — Applied on top of `.chapter-content` for songs: removes paragraph top/bottom margins, sets 1.6 line-height, suppresses the drop cap
 - `.skeleton` — Shimmer animation for loading states
 - `.animate-float` — Gentle floating animation (hero icon set, currently commented out)
 - Responsive font sizing: 0.95rem mobile, 1rem desktop for chapter content
@@ -741,7 +743,7 @@ Two-layer analytics: server-side Firestore counters for admin visibility, and Fi
 
 ## 14. Known Limitations & Future Considerations
 
-1. **No test coverage** — No unit, integration, or e2e test framework configured
+1. **No e2e test coverage** — Unit (172) and integration (62) tests in place; no Playwright/Cypress e2e tests yet
 2. **Single admin password** — All admins share one password; no per-user admin accounts
 3. **In-memory rate limiting** — Rate limiters reset on server cold start (serverless); no persistent store (Redis) used; analytics view counts may be slightly over-counted across instances
 4. **No search** — No book or content search functionality

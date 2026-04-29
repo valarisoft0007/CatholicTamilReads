@@ -162,7 +162,7 @@ export default function ChapterReaderPage() {
         </div>
 
         {/* Chapter content */}
-        <ChapterContent html={chapter.content} />
+        <ChapterContent html={chapter.content} bookType={book.bookType} />
 
         {/* Navigation */}
         <div className="mt-12">

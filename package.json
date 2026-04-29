@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest",
-    "test:run": "vitest run src/__tests__/validation src/__tests__/lib src/__tests__/api",
+    "test:run": "vitest run src/__tests__/validation src/__tests__/lib src/__tests__/api src/__tests__/components",
     "emulator:start": "firebase --config firebase.test.json emulators:start --only firestore,auth --project demo-test-project",
     "test:integration": "vitest run --config vitest.integration.config.ts src/__tests__/firestore",
     "test:coverage": "vitest run --coverage src/__tests__/validation src/__tests__/lib src/__tests__/api"
