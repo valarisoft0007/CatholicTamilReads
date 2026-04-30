@@ -104,6 +104,7 @@
 - [x] System theme preference detection
 - [x] Responsive mobile navigation (hamburger menu)
 - [x] Book detail page responsive layout — cover stacked above text on mobile, side-by-side on sm+
+- [x] Chapter reader page header responsive layout — title/info stacks above controls on mobile (`flex-col`), side-by-side on sm+ (`sm:flex-row sm:justify-between`)
 - [x] Loading skeleton animations
 - [x] Hero section with full-bleed background image (ctrs_image_12.jpg, 30% dark overlay, white text)
 - [x] Site favicon (src/app/icon.png — Next.js App Router convention + metadata icons field)

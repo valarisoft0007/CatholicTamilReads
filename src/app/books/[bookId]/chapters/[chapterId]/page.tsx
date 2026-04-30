@@ -132,7 +132,7 @@ export default function ChapterReaderPage() {
           >
             <span aria-hidden="true">&larr;</span> {book.title}
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
             <div>
               <p className="mb-1 text-sm text-muted">
                 {book.bookType === "songs" ? "Song" : "Chapter"} {chapter.order}
