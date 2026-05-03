@@ -157,6 +157,7 @@ src/
 │   │   ├── BookmarkButton.tsx        # Bookmark toggle
 │   │   ├── FontSizeToggle.tsx        # S/M/L text size selector
 │   │   ├── ChapterNavigation.tsx     # Prev/Next chapter buttons
+│   │   ├── ShareButton.tsx           # Share via Web Share API (mobile) or WhatsApp/Copy Link popover (desktop)
 │   │   └── BackToTop.tsx             # Floating scroll-to-top button
 │   ├── admin/
 │   │   ├── BookForm.tsx              # Book create/edit form
@@ -431,6 +432,7 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - Full description, author name, chapter count
 - Reading progress bar (if user has started reading)
 - "Start Reading" or "Continue Reading" CTA based on progress state
+- Share button — sits in CTA row; fires native OS share sheet on mobile, WhatsApp + Copy Link popover on desktop. Available to all visitors.
 - Table of contents with chapter status indicators:
   - Checkmark: completed chapters
   - Gold number: current chapter
@@ -443,7 +445,8 @@ Shared utility `src/lib/rate-limit.ts` — in-memory Map per IP, fixed window:
 - Estimated reading time (calculated from word count)
 - Reading progress bar fixed at top of page (scroll percentage)
 - Font size toggle (Small / Medium / Large), persisted in localStorage
-- Bookmark button to save/unsave current chapter
+- Bookmark button to save/unsave current chapter (authenticated users only)
+- Share button — fires native OS share sheet on mobile (Web Share API); shows WhatsApp + Copy Link popover on desktop. Available to all visitors (no login required). `align="right"` anchors popover to avoid viewport overflow.
 - Previous/Next chapter navigation buttons
 - Back to Top floating button (appears after 300px scroll)
 

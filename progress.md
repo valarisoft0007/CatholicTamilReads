@@ -66,7 +66,7 @@
 - [x] Songs/lyrics line spacing — tight `<br>`-based layout in editor and reader; Enter key inserts hard break (no paragraph gap); `songs-content` CSS class applied in reader
 - [ ] Text highlighting / annotations
 - [ ] Notes per chapter
-- [ ] Share chapter / book
+- [x] Share chapter / book — ShareButton component (Web Share API on mobile; WhatsApp + Copy Link popover on desktop); available to all visitors on book detail and chapter/song reader pages
 - [ ] Offline reading (PWA/Service Worker)
 - [ ] Audio narration / text-to-speech — See full spec: docs/audio-tts-feature-plan.md
 
@@ -127,7 +127,7 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [x] Unit tests — 172 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata, ChapterContent)
+- [x] Unit tests — 198 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata, ChapterContent, ShareButton)
 - [x] Integration tests — 62 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge
@@ -165,16 +165,16 @@
 | Core Infrastructure | 9 | 0 |
 | Authentication | 7 | 7 |
 | Public Pages | 8 | 3 |
-| Reader Features | 12 | 5 |
+| Reader Features | 13 | 4 |
 | Admin Panel | 20 | 4 |
 | Theming & UI | 10 | 3 |
 | Data Layer | 9 | 2 |
 | DevOps & Quality | 4 | 6 |
 | Security | 15 | 0 |
 | eBook Export | 20 | 0 |
-| **Total** | **113** | **30** |
+| **Total** | **114** | **29** |
 
-**Overall Progress: ~79% complete**
+**Overall Progress: ~80% complete**
 
 ---
 

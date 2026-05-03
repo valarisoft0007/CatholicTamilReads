@@ -14,6 +14,7 @@ import { ChapterNavigation } from "@/components/reader/ChapterNavigation";
 import { ReadingProgressBar } from "@/components/reader/ReadingProgressBar";
 import { BookmarkButton } from "@/components/reader/BookmarkButton";
 import { FontSizeToggle } from "@/components/reader/FontSizeToggle";
+import { ShareButton } from "@/components/reader/ShareButton";
 import { BackToTop } from "@/components/reader/BackToTop";
 import type { Book, Chapter } from "@/types";
 
@@ -150,6 +151,11 @@ export default function ChapterReaderPage() {
                   chapterTitle={chapter.title}
                 />
               )}
+              <ShareButton
+                title={chapter.title}
+                text={`Read '${chapter.title}' from '${book.title}' on Catholic Tamil Reads`}
+                align="right"
+              />
             </div>
           </div>
         </div>

@@ -196,7 +196,11 @@ export default function AdminChaptersPage() {
             >
               Previous
             </button>
-            <span className="text-sm text-muted">Page {currentPage + 1}</span>
+            <span className="text-sm text-muted">
+              {book && book.chapterCount > 0
+                ? `Page ${currentPage + 1} of ${Math.ceil(book.chapterCount / PAGE_SIZE)}`
+                : `Page ${currentPage + 1}`}
+            </span>
             <button
               disabled={!hasMore}
               onClick={() => loadPage(currentPage + 1, book)}
