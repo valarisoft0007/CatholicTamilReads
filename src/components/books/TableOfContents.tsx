@@ -12,9 +12,12 @@ interface TableOfContentsProps {
   hasMore?: boolean;
   hasPrev?: boolean;
   tocLoading?: boolean;
+  totalChapters?: number;
   onNext?: () => void;
   onPrev?: () => void;
 }
+
+const TOC_PAGE_SIZE = 25;
 
 export function TableOfContents({
   bookId,
@@ -25,9 +28,13 @@ export function TableOfContents({
   hasMore = false,
   hasPrev = false,
   tocLoading = false,
+  totalChapters,
   onNext,
   onPrev,
 }: TableOfContentsProps) {
+  const totalPages = totalChapters != null && totalChapters > 0
+    ? Math.ceil(totalChapters / TOC_PAGE_SIZE)
+    : null;
   if (chapters.length === 0 && !hasPrev) {
     return (
       <p className="py-10 text-center text-muted">
@@ -111,7 +118,11 @@ export function TableOfContents({
             Previous
           </button>
           <span className="text-sm text-muted">
-            {tocLoading ? "Loading..." : `Page ${tocPage + 1}`}
+            {tocLoading
+              ? "Loading..."
+              : totalPages != null
+                ? `Page ${tocPage + 1} of ${totalPages}`
+                : `Page ${tocPage + 1}`}
           </span>
           <button
             disabled={!hasMore || tocLoading}
