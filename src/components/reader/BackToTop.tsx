@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
@@ -14,9 +15,10 @@ export function BackToTop() {
   if (!visible) return null;
 
   return (
+    <Tooltip content="Back to top" position="left" wrapperClassName="fixed bottom-6 right-6 z-40 inline-flex">
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed bottom-6 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-white shadow-lg transition-all hover:bg-gold-dark hover:shadow-xl"
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-white shadow-lg transition-all hover:bg-gold-dark hover:shadow-xl"
       aria-label="Back to top"
     >
       <svg
@@ -33,5 +35,6 @@ export function BackToTop() {
         <polyline points="18 15 12 9 6 15" />
       </svg>
     </button>
+    </Tooltip>
   );
 }

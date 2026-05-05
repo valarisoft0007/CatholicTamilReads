@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 export function Header() {
   const { user, loading, signOut } = useAuth();
@@ -90,6 +91,7 @@ export function Header() {
         {/* Mobile: theme toggle + hamburger */}
         <div className="flex items-center gap-2 sm:hidden">
           <ThemeToggle />
+          <Tooltip content={menuOpen ? "Close menu" : "Open menu"} position="bottom">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-card transition-colors"
@@ -108,6 +110,7 @@ export function Header() {
               </svg>
             )}
           </button>
+          </Tooltip>
         </div>
       </div>
 

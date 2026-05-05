@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CopyEmailButton } from "./CopyEmailButton";
 
 export function Footer() {
   return (
@@ -28,6 +29,7 @@ export function Footer() {
             >
               Contact
             </a>
+            <CopyEmailButton email="catholictamilreads@gmail.com" />
           </nav>
 
           {/* Latin motto */}
