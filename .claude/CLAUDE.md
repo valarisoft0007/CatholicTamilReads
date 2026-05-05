@@ -10,7 +10,7 @@
 - Build: `npm run build`
 - Start: `npm start`
 - Lint: `npm run lint`
-- Unit tests: `npm run test:run` (no external deps, 198 tests — validation, lib, api, components)
+- Unit tests: `npm run test:run` (no external deps, 205 tests — validation, lib, api, components)
 - Integration tests: `npm run test:integration` (requires emulator running)
 - Start emulator: `npm run emulator:start` (uses firebase.test.json + firestore.test.rules)
 - Test coverage: `npm run test:coverage`

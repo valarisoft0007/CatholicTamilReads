@@ -22,6 +22,12 @@ export function Footer() {
             >
               Browse Books
             </Link>
+            <a
+              href="mailto:catholictamilreads@gmail.com"
+              className="text-sm text-muted hover:text-foreground transition-colors"
+            >
+              Contact
+            </a>
           </nav>
 
           {/* Latin motto */}

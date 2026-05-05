@@ -48,6 +48,7 @@
 - [ ] Book categories / genres
 - [ ] Pagination for book list
 - [x] 404 / error pages (not-found.tsx, error.tsx, global-error.tsx)
+- [x] Contact email in footer (catholictamilreads@gmail.com — mailto link)
 
 ## Reader Features
 - [x] Chapter content rendering (HTML with typography)
@@ -127,7 +128,7 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [x] Unit tests — 198 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata, ChapterContent, ShareButton)
+- [x] Unit tests — 205 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata, ChapterContent, ShareButton, Footer)
 - [x] Integration tests — 62 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge
