@@ -10,7 +10,7 @@
 - Build: `npm run build`
 - Start: `npm start`
 - Lint: `npm run lint`
-- Unit tests: `npm run test:run` (no external deps, 205 tests — validation, lib, api, components)
+- Unit tests: `npm run test:run` (no external deps, 247 tests — validation, lib, api, components)
 - Integration tests: `npm run test:integration` (requires emulator running)
 - Start emulator: `npm run emulator:start` (uses firebase.test.json + firestore.test.rules)
 - Test coverage: `npm run test:coverage`
@@ -35,7 +35,7 @@
 - Firebase SDK init in `src/lib/firebase/` (admin.ts for server, client.ts for browser)
 - Types in `src/types/index.ts`
 - Route protection via `src/middleware.ts` (JWT check on /admin/* routes)
-- `src/components/ui/` exists but is empty (placeholder)
+- `src/components/ui/` — shared UI primitives; currently has `Tooltip.tsx` (reusable tooltip, 4 positions, wrapperClassName prop)
 
 ## Auth
 - Users: Firebase Auth (Google Sign-In only) via AuthProvider context + useAuth() hook

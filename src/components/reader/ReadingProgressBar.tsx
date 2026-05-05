@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { saveProgress } from "@/lib/firestore/reading-progress";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 interface ReadingProgressBarProps {
   bookId: string;
@@ -17,7 +18,6 @@ export function ReadingProgressBar({
 }: ReadingProgressBarProps) {
   const { user } = useAuth();
   const [scrollPercent, setScrollPercent] = useState(0);
-  const [showTooltip, setShowTooltip] = useState(false);
   const lastSaved = useRef(0);
 
   const handleScroll = useCallback(() => {
@@ -52,23 +52,15 @@ export function ReadingProgressBar({
   }, [handleScroll]);
 
   return (
-    <div
-      className="fixed left-0 top-0 z-50 h-1 w-full bg-border/50"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
+    <Tooltip
+      content={scrollPercent > 0 ? `${scrollPercent}%` : ""}
+      position="bottom"
+      wrapperClassName="fixed left-0 top-0 z-50 h-1 w-full bg-border/50"
     >
       <div
         className="h-full bg-gradient-to-r from-gold-dark via-gold to-gold-light transition-all duration-150"
         style={{ width: `${scrollPercent}%` }}
       />
-      {showTooltip && scrollPercent > 0 && (
-        <span
-          className="absolute top-2 rounded bg-foreground/90 px-2 py-0.5 text-xs text-background"
-          style={{ left: `${Math.min(scrollPercent, 95)}%` }}
-        >
-          {scrollPercent}%
-        </span>
-      )}
-    </div>
+    </Tooltip>
   );
 }

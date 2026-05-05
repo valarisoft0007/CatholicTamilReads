@@ -71,7 +71,7 @@ The project uses **Vitest** for unit tests and integration tests. Integration te
   ```
 
 #### Unit tests (no emulator needed)
-Covers: Zod validation schemas, utility functions (`sanitize`, `rate-limit`), and all API route handlers (with mocked Firebase/Cloudinary).
+Covers: Zod validation schemas, utility functions (`sanitize`, `rate-limit`), API route handlers (with mocked Firebase/Cloudinary), and React components (HeroSection, Footer, ShareButton, Tooltip, CopyEmailButton, FavoriteButton, BackToTop, ChapterContent).
 
 ```bash
 npm run test:run       # Run once and exit
@@ -109,6 +109,11 @@ src/__tests__/
 │   ├── admin/         # login, logout, verify, news CRUD, users
 │   ├── analytics/     # view route
 │   └── books/         # download route
+├── components/        # React component tests (jsdom)
+│   ├── HeroSection, Footer, ShareButton
+│   ├── Tooltip, CopyEmailButton
+│   ├── FavoriteButton, BackToTop
+│   └── ChapterContent
 └── firestore/         # Firestore + Auth emulator integration tests
     ├── books.test.ts
     ├── chapters.test.ts
@@ -120,8 +125,8 @@ src/__tests__/
 
 | Command | Tests | Requires |
 |---------|-------|----------|
-| `npm run test:run` | 147 unit + API tests | Nothing |
-| `npm run test:integration` | 62 Firestore + Auth emulator tests | Emulator running |
+| `npm run test:run` | 247 unit + component tests | Nothing |
+| `npm run test:integration` | 68 Firestore + Auth emulator tests | Emulator running |
 | `npm run emulator:start` | — | Java 17+, firebase-tools |
 
 ## Project Structure
@@ -142,9 +147,10 @@ src/
 ├── components/             # React components by feature
 │   ├── admin/              # BookForm, ChapterForm, RichTextEditor, ImageUpload
 │   ├── auth/               # AuthProvider, SignInForm
-│   ├── books/              # BookGrid, BookCard, TableOfContents
-│   ├── layout/             # Header, Footer, AdminSidebar
-│   └── reader/             # ChapterContent, ReadingProgressBar, BookmarkButton, etc.
+│   ├── books/              # BookGrid, BookCard, TableOfContents, FavoriteButton
+│   ├── layout/             # Header, Footer, AdminSidebar, CopyEmailButton
+│   ├── reader/             # ChapterContent, ReadingProgressBar, BookmarkButton, BackToTop, etc.
+│   └── ui/                 # Shared UI primitives — Tooltip
 ├── hooks/                  # useAuth hook
 ├── lib/
 │   ├── firebase/           # Firebase SDK initialization (admin + client)

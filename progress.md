@@ -43,12 +43,12 @@
 - [x] Chapter reader page with HTML content rendering
 - [x] User sign-in page
 - [x] User sign-up page
-- [x] User profile / library page
+- [x] User profile / library page (Continue Reading shows book title — fetched from Firestore on load)
 - [ ] Book search / filtering
 - [ ] Book categories / genres
 - [ ] Pagination for book list
 - [x] 404 / error pages (not-found.tsx, error.tsx, global-error.tsx)
-- [x] Contact email in footer (catholictamilreads@gmail.com — mailto link)
+- [x] Contact email in footer (catholictamilreads@gmail.com — mailto "Contact" link + CopyEmailButton clipboard copy)
 
 ## Reader Features
 - [x] Chapter content rendering (HTML with typography)
@@ -56,7 +56,7 @@
 - [x] Auto-save reading progress (every 5 seconds)
 - [x] Last chapter + scroll position tracking
 - [x] Chapter bookmarking (add/remove)
-- [x] Book favorites (add/remove)
+- [x] Book favorites (add/remove) — FavoriteButton on book detail page (heart icon, optimistic toggle, tooltip; signed-in users only); displays in profile Favorite Books list
 - [x] Font size toggle (S/M/L with localStorage persistence)
 - [x] Previous/Next chapter navigation
 - [x] Table of contents with read/current/upcoming indicators
@@ -110,6 +110,8 @@
 - [x] Hero section with full-bleed background image (ctrs_image_12.jpg, 30% dark overlay, white text)
 - [x] Site favicon (src/app/icon.png — Next.js App Router convention + metadata icons field)
 - [x] Google Fonts (Inter + Lora)
+- [x] Tooltip component (`src/components/ui/Tooltip.tsx`) — reusable, 4 positions (top/bottom/left/right), `wrapperClassName` prop for fixed-position containers, empty-content guard
+- [x] Icon-button tooltips — ThemeToggle, BackToTop, mobile menu, ChapterForm close (×), drag handle, ReadingProgressBar scroll %, footer email copy button
 - [~] Accessibility audit (WCAG compliance) — quick wins done: skip link, aria-hidden on decorative elements, progressbar role, aria-label on nav
 - [~] Keyboard navigation improvements — focus-visible ring (globals.css) + skip link done; missing: focus trap in modals, Escape to close menus, arrow key shortcuts in reader
 - [~] Screen reader optimizations — sr-only skip link, aria-hidden on decorative elements, aria-label on all icon buttons, progressbar role done; missing: aria-live for dynamic updates, aria-expanded on mobile menu, aria-current on nav links
@@ -128,7 +130,7 @@
 - [ ] Caching strategy — SWR installed (v2.4.1) but not used anywhere; server components use Firestore directly; potential for client-side bookmarks/favorites/reading-progress caching
 
 ## DevOps & Quality
-- [x] Unit tests — 205 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata, ChapterContent, ShareButton, Footer)
+- [x] Unit tests — 247 tests (Vitest): Zod validation, utilities, API routes (mocked), React components (HeroSection, layout metadata, ChapterContent, ShareButton, Footer, Tooltip, CopyEmailButton, FavoriteButton, BackToTop)
 - [x] Integration tests — 62 tests (Vitest + Firebase emulator): Firestore service layer + Auth emulator (listUsers)
 - [x] CI/CD pipeline — GitHub Actions: lint → unit tests → integration tests on push to dev / PR to main
 - [x] Branch protection on main — all 3 CI jobs must pass before merge
@@ -168,12 +170,12 @@
 | Public Pages | 8 | 3 |
 | Reader Features | 13 | 4 |
 | Admin Panel | 20 | 4 |
-| Theming & UI | 10 | 3 |
+| Theming & UI | 12 | 3 |
 | Data Layer | 9 | 2 |
 | DevOps & Quality | 4 | 6 |
 | Security | 15 | 0 |
 | eBook Export | 20 | 0 |
-| **Total** | **114** | **29** |
+| **Total** | **116** | **29** |
 
 **Overall Progress: ~80% complete**
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RichTextEditor } from "./RichTextEditor";
 import { ChapterContent } from "@/components/reader/ChapterContent";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { Chapter } from "@/types";
 
 interface ChapterFormProps {
@@ -147,6 +148,7 @@ export function ChapterForm({ bookId, chapter, bookType, nextOrder }: ChapterFor
               <h2 className="text-lg font-semibold">{title || "Untitled Chapter"}</h2>
               <p className="text-xs text-muted-foreground">Preview — not saved</p>
             </div>
+            <Tooltip content="Close preview" position="left">
             <button
               type="button"
               onClick={() => setShowPreview(false)}
@@ -155,6 +157,7 @@ export function ChapterForm({ bookId, chapter, bookType, nextOrder }: ChapterFor
             >
               &times;
             </button>
+            </Tooltip>
           </div>
           <div className="px-6 py-8">
             {content ? (

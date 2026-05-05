@@ -11,6 +11,7 @@ import { getProgress } from "@/lib/firestore/reading-progress";
 import { TableOfContents } from "@/components/books/TableOfContents";
 import { DownloadButtons } from "@/components/books/DownloadButtons";
 import { ShareButton } from "@/components/reader/ShareButton";
+import { FavoriteButton } from "@/components/books/FavoriteButton";
 import { useAuth } from "@/hooks/useAuth";
 import { getClientAnalytics } from "@/lib/firebase/client";
 import { logEvent } from "firebase/analytics";
@@ -180,6 +181,11 @@ export default function BookDetailPage() {
                 Start Reading
               </Link>
             )}
+            <FavoriteButton
+              bookId={bookId}
+              bookTitle={book.title}
+              coverImageUrl={book.coverImageUrl}
+            />
             <ShareButton
               title={book.title}
               text={`Read '${book.title}' by ${book.authorName} on Catholic Tamil Reads`}

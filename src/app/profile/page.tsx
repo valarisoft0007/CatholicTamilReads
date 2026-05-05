@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [progress, setProgress] = useState<ReadingProgress[]>([]);
+  const [progressTitles, setProgressTitles] = useState<Record<string, string>>({});
   const [downloads, setDownloads] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +36,16 @@ export default function ProfilePage() {
       setBookmarks(b);
       setFavorites(f);
       setProgress(p);
+
+      // Fetch book titles for reading progress entries
+      if (p.length > 0) {
+        const progressBooks = await Promise.all(p.map((item) => getBook(item.bookId)));
+        const titles: Record<string, string> = {};
+        progressBooks.forEach((bk, i) => {
+          if (bk) titles[p[i].bookId] = bk.title;
+        });
+        setProgressTitles(titles);
+      }
 
       // Fetch book data for favorites that have eBook downloads
       if (f.length > 0) {
@@ -93,7 +104,7 @@ export default function ProfilePage() {
                 className="flex items-center justify-between rounded-lg border border-border bg-card p-4 hover:border-gold/30 transition-colors"
               >
                 <div>
-                  <p className="font-medium">Book</p>
+                  <p className="font-medium">{progressTitles[p.bookId] ?? "Book"}</p>
                   <p className="text-sm text-muted">
                     Chapter {p.lastChapterOrder} &middot; {p.scrollPosition}%
                     complete

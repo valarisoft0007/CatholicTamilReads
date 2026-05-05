@@ -24,6 +24,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { getBook } from "@/lib/firestore/books";
 import { getChaptersPage } from "@/lib/firestore/chapters";
 import { ExportButtons } from "@/components/admin/ExportButtons";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { Book, Chapter } from "@/types";
 import type { QueryDocumentSnapshot } from "firebase/firestore";
 
@@ -243,6 +244,7 @@ function SortableChapterItem({
     >
       <div className="flex items-center gap-3">
         {/* Drag handle */}
+        <Tooltip content="Drag to reorder" position="right">
         <button
           {...attributes}
           {...listeners}
@@ -259,6 +261,7 @@ function SortableChapterItem({
             <circle cx="11" cy="12" r="1.5" />
           </svg>
         </button>
+        </Tooltip>
 
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10 text-sm font-medium text-gold-dark">
           {chapter.order}

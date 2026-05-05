@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -16,6 +17,7 @@ export function ThemeToggle() {
   const isDark = theme === "dark";
 
   return (
+    <Tooltip content={`Switch to ${isDark ? "light" : "dark"} mode`} position="bottom">
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="flex h-9 w-9 items-center justify-center rounded-full bg-card text-muted transition-colors hover:bg-card-hover hover:text-foreground"
@@ -59,5 +61,6 @@ export function ThemeToggle() {
         </svg>
       )}
     </button>
+    </Tooltip>
   );
 }
